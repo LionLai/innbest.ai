@@ -1,0 +1,76 @@
+# Next.js 相關
+.next/
+out/
+build/
+dist/
+
+# 依賴套件
+node_modules/
+.pnp
+.pnp.js
+
+# 環境變數（敏感資訊）
+.env
+.env*.local
+.env.production
+!.env.example
+!.env.local.example
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# 測試覆蓋率
+coverage/
+*.lcov
+.nyc_output
+
+# 偵錯日誌
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 編輯器與 IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.fleet/
+
+# 作業系統
+.DS_Store
+Thumbs.db
+
+# Vercel 部署
+.vercel
+
+# Turbopack 快取
+.turbo
+
+# 其他快取
+.cache/
+.parcel-cache/
+
+# 備份檔案
+*.bak
+*.backup
+*.tmp
+*~.nib
+
+# 文件工具
+.docusaurus
+.serverless/
+.fusebox/

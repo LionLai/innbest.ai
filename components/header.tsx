@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { Menu } from 'lucide-react'
 import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import Link from "next/link"
 
 export function Header() {
   const { t } = useLanguage()
@@ -24,6 +25,9 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
+            <Link href="/hotels" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
+              飯店據點
+            </Link>
             <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
               {t.powerStack.badge}
             </button>
@@ -54,6 +58,11 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px]">
                 <nav className="flex flex-col gap-4 mt-8">
+                  <Link href="/hotels" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="justify-start w-full">
+                      飯店據點
+                    </Button>
+                  </Link>
                   <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>
                     {t.powerStack.badge}
                   </Button>
