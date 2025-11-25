@@ -11,6 +11,7 @@ export function HotelsContent() {
   const [properties, setProperties] = useState<HotelProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"properties" | "availability">("properties");
 
   useEffect(() => {
     fetchProperties();
@@ -64,8 +65,6 @@ export function HotelsContent() {
       </div>
     );
   }
-
-  const [activeTab, setActiveTab] = useState<"properties" | "availability">("properties");
 
   return (
     <Tabs 

@@ -186,7 +186,7 @@ export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormPro
                 return (
                   <div key={`${room.propertyId}-${room.roomId}`} className="border rounded-lg p-4">
                     <h4 className="font-semibold mb-3">
-                      {room.name} <span className="text-sm text-muted-foreground">(ID: {room.roomId})</span>
+                      {room.name}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
