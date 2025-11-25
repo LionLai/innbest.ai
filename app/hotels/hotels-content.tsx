@@ -5,6 +5,7 @@ import { HotelPropertyCard } from "@/components/hotel-property-card";
 import { AvailabilitySearchForm } from "@/components/availability-search-form";
 import type { HotelProperty } from "@/lib/types/hotel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 export function HotelsContent() {
   const [properties, setProperties] = useState<HotelProperty[]>([]);
@@ -64,12 +65,49 @@ export function HotelsContent() {
     );
   }
 
+  const [activeTab, setActiveTab] = useState<"properties" | "availability">("properties");
+
   return (
-    <Tabs defaultValue="properties" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 max-w-[400px] mx-auto">
-        <TabsTrigger value="properties">飯店據點</TabsTrigger>
-        <TabsTrigger value="availability">查詢空房</TabsTrigger>
-      </TabsList>
+    <Tabs 
+      defaultValue="properties" 
+      className="w-full"
+      onValueChange={(value) => setActiveTab(value as "properties" | "availability")}
+    >
+      <div className="flex flex-col items-center gap-4 mb-8">
+        <TabsList className="grid w-full grid-cols-2 max-w-[400px] mx-auto relative">
+          <TabsTrigger 
+            value="properties"
+            className="relative z-10"
+          >
+            <span className="flex items-center gap-2">
+              🏨 飯店據點
+              {activeTab === "properties" && (
+                <Badge variant="default" className="ml-1 text-xs px-1.5 py-0">
+                  目前
+                </Badge>
+              )}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="availability"
+            className="relative z-10"
+          >
+            <span className="flex items-center gap-2">
+              🔍 查詢空房
+              {activeTab === "availability" && (
+                <Badge variant="default" className="ml-1 text-xs px-1.5 py-0">
+                  目前
+                </Badge>
+              )}
+            </span>
+          </TabsTrigger>
+        </TabsList>
+        <p className="text-sm text-muted-foreground">
+          目前查看：<span className="font-semibold text-foreground">
+            {activeTab === "properties" ? "飯店據點" : "查詢空房"}
+          </span>
+        </p>
+      </div>
 
       <TabsContent value="properties" className="space-y-6 mt-8">
         {properties.length === 0 ? (
@@ -83,7 +121,7 @@ export function HotelsContent() {
           <>
             <div className="flex items-center justify-between mb-6">
               <p className="text-sm text-muted-foreground">
-                目前管理 {properties.length} 間優質飯店
+                目前我們管理了 {properties.length} 間優質飯店
               </p>
               <button
                 onClick={fetchProperties}
