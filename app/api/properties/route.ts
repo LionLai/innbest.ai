@@ -11,6 +11,7 @@ export async function GET() {
       params: {
         query: {
           includeAllRooms: true, // 包含所有房型
+          includePictures: true, // 包含所有圖片
         },
       },
     });

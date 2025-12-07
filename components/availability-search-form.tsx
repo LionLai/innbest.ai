@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ interface AvailabilitySearchFormProps {
 }
 
 export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormProps) {
+  const router = useRouter();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedPropertyId, setSelectedPropertyId] = useState<number | "">("");
@@ -182,12 +184,32 @@ export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormPro
                 const dates = Object.keys(room.availability).sort();
                 const availableDates = dates.filter((date) => room.availability[date]);
                 const unavailableDates = dates.filter((date) => !room.availability[date]);
+                const isFullyAvailable = unavailableDates.length === 0 && availableDates.length > 0;
 
                 return (
                   <div key={`${room.propertyId}-${room.roomId}`} className="border rounded-lg p-4">
-                    <h4 className="font-semibold mb-3">
-                      {room.name}
-                    </h4>
+                    <div className="flex justify-between items-start mb-4">
+                      <h4 className="font-semibold text-lg">
+                        {room.name}
+                      </h4>
+                      {isFullyAvailable && (
+                        <Button 
+                          onClick={() => {
+                            const params = new URLSearchParams({
+                              roomId: room.roomId.toString(),
+                              propertyId: room.propertyId.toString(),
+                              startDate,
+                              endDate,
+                              roomName: room.name
+                            });
+                            router.push(`/book?${params.toString()}`);
+                          }}
+                        >
+                          立即預訂
+                        </Button>
+                      )}
+                    </div>
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <div className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
