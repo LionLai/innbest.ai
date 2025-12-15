@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { BookingStatus } from '@/lib/generated/prisma';
 import { stripe } from '@/lib/stripe';
-import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
+import { getBeds24Headers } from '@/lib/beds24-client';
+import { calculateRoomPrice } from '@/lib/calculate-price';
 
 // 訂單創建請求驗證 Schema
 const createBookingSchema = z.object({
@@ -47,22 +48,17 @@ export async function POST(req: Request) {
 
     // 2. 再次驗證價格（防止前端篡改）
     const headers = await getBeds24Headers();
-    const priceVerifyResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/bookings/calculate-price`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const priceResult = await calculateRoomPrice(
+      {
         roomId: data.roomId,
         propertyId: data.propertyId,
         startDate: data.checkIn,
         endDate: data.checkOut,
-      }),
-    });
-
-    const priceResult = await priceVerifyResponse.json();
+      },
+      headers
+    );
     
-    if (!priceResult.success || priceResult.data.totalAmount !== data.totalAmount) {
+    if (!priceResult.success || priceResult.data?.totalAmount !== data.totalAmount) {
       return NextResponse.json(
         { 
           success: false, 
