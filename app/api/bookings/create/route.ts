@@ -127,23 +127,9 @@ export async function POST(req: Request) {
       expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 分鐘後過期
     });
 
-    // 6. 創建 Payment 記錄並關聯到 Booking
-    const payment = await prisma.payment.create({
-      data: {
-        stripePaymentIntentId: checkoutSession.payment_intent as string || 'pending',
-        stripeCheckoutId: checkoutSession.id,
-        amount: data.totalAmount,
-        currency: data.currency,
-        status: 'PENDING',
-      },
-    });
-
-    // 7. 更新 Booking 關聯 Payment
-    await prisma.booking.update({
-      where: { id: booking.id },
-      data: { paymentId: payment.id },
-    });
-
+    // 6. 返回結果（Payment 記錄將在 Webhook 中創建）
+    console.log('✅ 訂單創建成功，等待付款:', booking.id);
+    
     return NextResponse.json({
       success: true,
       bookingId: booking.id,

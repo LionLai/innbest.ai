@@ -88,23 +88,27 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   console.log('🎉 處理訂單付款成功:', bookingId);
 
-  // 1. 更新訂單狀態
+  // 1. 創建 Payment 記錄
+  const payment = await prisma.payment.create({
+    data: {
+      stripePaymentIntentId: session.payment_intent as string,
+      stripeCheckoutId: session.id,
+      amount: session.amount_total || 0,
+      currency: session.currency?.toUpperCase() || 'JPY',
+      status: PaymentStatus.SUCCEEDED,
+      paidAt: new Date(),
+      metadata: session.metadata || undefined,
+    },
+  });
+
+  console.log('✅ Payment 記錄已創建:', payment.id);
+
+  // 2. 更新訂單狀態並關聯 Payment
   const booking = await prisma.booking.update({
     where: { id: bookingId },
     data: { 
       status: BookingStatus.PAYMENT_COMPLETED,
-      updatedAt: new Date(),
-    },
-  });
-
-  // 2. 更新 Payment 記錄
-  await prisma.payment.update({
-    where: { 
-      stripePaymentIntentId: session.payment_intent as string,
-    },
-    data: {
-      status: PaymentStatus.SUCCEEDED,
-      paidAt: new Date(),
+      paymentId: payment.id,
       updatedAt: new Date(),
     },
   });
@@ -134,24 +138,30 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
 
   console.log('❌ 訂單付款失敗:', bookingId);
 
-  // 更新訂單狀態為失敗
+  // 1. 創建失敗的 Payment 記錄
+  const payment = await prisma.payment.create({
+    data: {
+      stripePaymentIntentId: paymentIntent.id,
+      stripeCheckoutId: paymentIntent.metadata?.checkoutSessionId || null,
+      amount: paymentIntent.amount || 0,
+      currency: paymentIntent.currency?.toUpperCase() || 'JPY',
+      status: PaymentStatus.FAILED,
+      failureReason: paymentIntent.last_payment_error?.message,
+      metadata: paymentIntent.metadata || undefined,
+    },
+  });
+
+  // 2. 更新訂單狀態為取消並關聯 Payment
   await prisma.booking.update({
     where: { id: bookingId },
     data: { 
       status: BookingStatus.CANCELLED,
+      paymentId: payment.id,
+      failureReason: paymentIntent.last_payment_error?.message || '付款失敗',
       updatedAt: new Date(),
     },
   });
 
-  // 更新 Payment 記錄
-  await prisma.payment.update({
-    where: { 
-      stripePaymentIntentId: paymentIntent.id,
-    },
-    data: {
-      status: PaymentStatus.FAILED,
-      updatedAt: new Date(),
-    },
-  });
+  console.log('✅ 付款失敗處理完成:', bookingId);
 }
 
