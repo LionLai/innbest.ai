@@ -178,7 +178,7 @@ export function AvailabilityCalendar({
   const isFullyAvailable = dates.length > 0 && availableDates.length === dates.length;
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${selectedCheckIn && selectedCheckOut && selectedRangePrices ? 'pb-32' : ''}`}>
       {/* 房型選擇 */}
       {availability.length > 1 && (
         <Card>
@@ -238,7 +238,8 @@ export function AvailabilityCalendar({
               </CardDescription>
             </div>
             <div className="flex gap-2">
-              {selectedCheckIn && selectable && (
+              {/* 只在未選擇完整日期範圍時顯示清除按鈕 */}
+              {selectedCheckIn && !selectedCheckOut && selectable && (
                 <Button 
                   onClick={handleClearSelection}
                   variant="outline"
@@ -249,15 +250,7 @@ export function AvailabilityCalendar({
                   清除
                 </Button>
               )}
-              {selectedCheckIn && selectedCheckOut && selectedRangePrices && onBook && (
-                <Button 
-                  onClick={() => onBook(selectedRoom, selectedCheckIn, selectedCheckOut)}
-                  className="w-full sm:w-auto"
-                  size="sm"
-                >
-                  立即預訂 ¥{selectedRangePrices.total.toLocaleString()}
-                </Button>
-              )}
+              {/* 非選擇模式時的預訂按鈕 */}
               {!selectable && isFullyAvailable && onBook && (
                 <Button 
                   onClick={() => onBook(selectedRoom, startDate, endDate)}
@@ -442,6 +435,81 @@ export function AvailabilityCalendar({
           </div>
         </CardContent>
       </Card>
+      
+      {/* 底部浮動預定按鈕 - 選完日期後從下方升起 */}
+      {selectable && selectedCheckIn && selectedCheckOut && selectedRangePrices && onBook && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom duration-300"
+          style={{
+            animation: 'slideUp 0.3s ease-out',
+          }}
+        >
+          {/* 漸變背景遮罩 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/80 to-transparent pointer-events-none" />
+          
+          {/* 內容區 */}
+          <div className="relative container mx-auto px-4 max-w-2xl py-4 pb-8">
+            <Card className="border-2 border-primary shadow-2xl backdrop-blur-sm bg-background/95">
+              <CardContent className="p-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  {/* 左側：日期和價格資訊 */}
+                  <div className="flex-1 space-y-1 min-w-0">
+                    <div className="font-semibold text-foreground truncate">
+                      {selectedRoom.name}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {selectedCheckIn} → {selectedCheckOut}
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl sm:text-3xl font-bold text-primary">
+                        ¥{selectedRangePrices.total.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        ({selectedRangePrices.nights} 晚)
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* 右側：按鈕 */}
+                  <div className="flex gap-2 w-full sm:w-auto sm:flex-col lg:flex-row">
+                    <Button
+                      onClick={handleClearSelection}
+                      variant="outline"
+                      size="lg"
+                      className="flex-1 sm:flex-none sm:min-w-[120px]"
+                    >
+                      <X className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">重新選擇</span>
+                      <span className="sm:hidden">清除</span>
+                    </Button>
+                    <Button
+                      onClick={() => onBook(selectedRoom, selectedCheckIn, selectedCheckOut)}
+                      size="lg"
+                      className="flex-1 sm:flex-none sm:min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg"
+                    >
+                      立即預訂
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+      
+      {/* 添加動畫 keyframes */}
+      <style jsx>{`
+        @keyframes slideUp {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }
