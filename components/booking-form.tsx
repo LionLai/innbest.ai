@@ -69,38 +69,54 @@ export function BookingForm({
     setError(null);
 
     try {
-      // TODO: 這裡之後會調用創建 Stripe Checkout 的 API
-      // 目前先顯示成功訊息
-      console.log("訂房資料:", {
-        ...data,
-        roomId,
-        propertyId,
-        roomName,
-        checkIn,
-        checkOut,
-        totalAmount,
-        currency,
-        priceBreakdown,
+      // 拆分姓名（假設格式：姓 名）
+      const nameParts = data.guestName.trim().split(' ');
+      const guestFirstName = nameParts[0];
+      const guestLastName = nameParts.slice(1).join(' ');
+
+      // 調用訂單創建 API
+      const response = await fetch('/api/bookings/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          roomId,
+          propertyId,
+          roomName,
+          checkIn,
+          checkOut,
+          guestFirstName,
+          guestLastName: guestLastName || undefined,
+          guestEmail: data.guestEmail,
+          guestPhone: data.guestPhone,
+          numAdults: data.adults,
+          numChildren: data.children,
+          specialRequests: data.specialRequests || undefined,
+          totalAmount,
+          currency,
+          priceBreakdown,
+        }),
       });
 
-      alert(`訂房資訊已準備好！
-      
-姓名：${data.guestName}
-Email：${data.guestEmail}
-電話：${data.guestPhone}
-入住人數：${data.adults} 位成人${data.children > 0 ? `，${data.children} 位兒童` : ''}
-總金額：¥${totalAmount.toLocaleString()}
+      const result = await response.json();
 
-（實際付款功能尚未整合）`);
+      if (!result.success) {
+        throw new Error(result.error || '訂單創建失敗');
+      }
 
-      // 關閉對話框
-      onCancel();
+      // 重定向到 Stripe Checkout
+      if (result.checkoutUrl) {
+        window.location.href = result.checkoutUrl;
+      } else {
+        throw new Error('未收到付款連結');
+      }
     } catch (err) {
       console.error("提交錯誤:", err);
-      setError("提交失敗，請稍後再試");
-    } finally {
+      setError(err instanceof Error ? err.message : '提交失敗，請稍後再試');
       setIsSubmitting(false);
     }
+    // 注意：不在 finally 中設置 setIsSubmitting(false)，因為頁面會重定向
   };
 
   return (

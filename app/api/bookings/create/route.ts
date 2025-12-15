@@ -1,97 +1,166 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
+import { BookingStatus } from '@/lib/generated/prisma';
 import { stripe } from '@/lib/stripe';
 import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
 
+// 訂單創建請求驗證 Schema
+const createBookingSchema = z.object({
+  roomId: z.number().int().positive(),
+  propertyId: z.number().int().positive(),
+  roomName: z.string().min(1),
+  checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  guestFirstName: z.string().min(1).max(50),
+  guestLastName: z.string().max(50).optional(),
+  guestEmail: z.string().email(),
+  guestPhone: z.string().min(10).max(20),
+  numAdults: z.number().int().min(1).max(10),
+  numChildren: z.number().int().min(0).max(10),
+  specialRequests: z.string().max(500).optional(),
+  totalAmount: z.number().positive().transform(val => Math.round(val)), // 接受浮點數並四捨五入
+  currency: z.string(),
+  priceBreakdown: z.record(z.number().transform(val => Math.round(val))), // 價格明細也四捨五入
+});
+
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
-    // 從 session cookie 獲取認證 headers
-    const headers = await getBeds24Headers();
-    
     const body = await req.json();
-    const { 
-      paymentIntentId, 
-      roomId, 
-      startDate, 
-      endDate, 
-      guestName, 
-      email, 
-      phone,
-      adults,
-      children
-    } = body;
-
-    if (!paymentIntentId || !roomId || !startDate || !endDate || !guestName) {
-      return NextResponse.json(
-        { error: '缺少必要參數' },
-        { status: 400 }
-      );
-    }
-
-    // 1. 驗證 Stripe 付款狀態
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-    if (paymentIntent.status !== 'succeeded') {
-      return NextResponse.json(
-        { error: '付款尚未完成' },
-        { status: 400 }
-      );
-    }
-
-    // 2. 建立 Beds24 訂單
-    // 拆分姓名 (如果只有一個欄位)
-    const nameParts = guestName.trim().split(' ');
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(' ') || '.'; // Beds24 可能需要 lastName
-
-    const bookingData = [{
-      roomId: Number(roomId),
-      arrival: startDate,
-      departure: endDate,
-      status: 'confirmed' as const, // 直接確認
-      firstName,
-      lastName,
-      email,
-      mobile: phone,
-      numAdult: Number(adults),
-      numChild: Number(children),
-      // 將 Stripe ID 記錄在 custom1 欄位，方便對帳
-      custom1: paymentIntentId,
-      // 記錄付款金額 (這只是記錄，不會觸發 Beds24 收款)
-      price: paymentIntent.amount / 100, // 轉回主要單位 (假設 JPY 無小數，這裡可能需要根據幣別調整)
-      apiMessage: 'Created via Innbest.ai Website',
-    }];
-
-    // 呼叫 Beds24 API 創建訂單（SDK 0.2.0 無狀態設計）
-    const { data: bookingResult, error: bookingError } = await beds24Client.POST('/bookings', {
-      headers,  // 每次請求傳入 token
-      body: bookingData,
-    });
-
-    if (bookingError) {
-      console.error('Beds24 Booking API Error:', bookingError);
-      
-      // 嚴重錯誤：付款成功但訂單建立失敗
-      // 這裡應該觸發退款流程或發送警報給管理員
-      // 暫時先回傳錯誤，讓前端顯示聯繫客服
+    
+    // 1. 驗證請求數據
+    const validation = createBookingSchema.safeParse(body);
+    if (!validation.success) {
       return NextResponse.json(
         { 
-          error: '訂單建立失敗，請聯繫客服。您的付款已成功，我們會協助處理。',
-          paymentIntentId 
+          success: false, 
+          error: '請求參數無效', 
+          details: validation.error.flatten().fieldErrors 
         },
-        { status: 500 }
+        { status: 400 }
       );
     }
+
+    const data = validation.data;
+
+    // 2. 再次驗證價格（防止前端篡改）
+    const headers = await getBeds24Headers();
+    const priceVerifyResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/bookings/calculate-price`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        roomId: data.roomId,
+        propertyId: data.propertyId,
+        startDate: data.checkIn,
+        endDate: data.checkOut,
+      }),
+    });
+
+    const priceResult = await priceVerifyResponse.json();
+    
+    if (!priceResult.success || priceResult.data.totalAmount !== data.totalAmount) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: '價格驗證失敗，請重新計算價格',
+        },
+        { status: 400 }
+      );
+    }
+
+    // 3. 計算住宿天數
+    const checkInDate = new Date(data.checkIn);
+    const checkOutDate = new Date(data.checkOut);
+    const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    // 4. 創建本地訂單記錄（狀態：PENDING）
+    const booking = await prisma.booking.create({
+      data: {
+        propertyId: data.propertyId,
+        roomId: data.roomId,
+        roomName: data.roomName,
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        nights,
+        totalAmount: data.totalAmount,
+        currency: data.currency,
+        guestName: `${data.guestFirstName} ${data.guestLastName || ''}`.trim(),
+        guestEmail: data.guestEmail,
+        guestPhone: data.guestPhone,
+        adults: data.numAdults,
+        children: data.numChildren,
+        specialRequests: data.specialRequests || null,
+        status: BookingStatus.PENDING,
+      },
+    });
+
+    // 5. 創建 Stripe Checkout Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: data.currency.toLowerCase(),
+            product_data: {
+              name: data.roomName,
+              description: `${data.checkIn} - ${data.checkOut} (${nights} 晚)`,
+              metadata: {
+                bookingId: booking.id,
+                roomId: data.roomId.toString(),
+                propertyId: data.propertyId.toString(),
+              },
+            },
+            unit_amount: data.totalAmount, // Stripe 使用最小單位（JPY 的話就是圓）
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/book/success?session_id={CHECKOUT_SESSION_ID}&booking_id=${booking.id}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/hotels?booking_cancelled=true`,
+      customer_email: data.guestEmail,
+      metadata: {
+        bookingId: booking.id,
+        roomId: data.roomId.toString(),
+        propertyId: data.propertyId.toString(),
+      },
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 分鐘後過期
+    });
+
+    // 6. 創建 Payment 記錄並關聯到 Booking
+    const payment = await prisma.payment.create({
+      data: {
+        stripePaymentIntentId: checkoutSession.payment_intent as string || 'pending',
+        stripeCheckoutId: checkoutSession.id,
+        amount: data.totalAmount,
+        currency: data.currency,
+        status: 'PENDING',
+      },
+    });
+
+    // 7. 更新 Booking 關聯 Payment
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: { paymentId: payment.id },
+    });
 
     return NextResponse.json({
       success: true,
-      bookingId: (bookingResult?.[0] as any)?.id, // 轉型為 any 以存取 id，因為 SDK 定義可能不完整
-      message: '訂房成功'
+      bookingId: booking.id,
+      checkoutUrl: checkoutSession.url,
     });
 
   } catch (err) {
-    console.error('Create Booking Error:', err);
+    console.error('❌ 創建訂單錯誤:', err);
     return NextResponse.json(
-      { error: '系統錯誤' },
+      { 
+        success: false, 
+        error: '系統錯誤，請稍後再試' 
+      },
       { status: 500 }
     );
   }

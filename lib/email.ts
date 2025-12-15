@@ -7,6 +7,92 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@innbest.ai';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@innbest.ai';
 
 /**
+ * 通用的發送郵件函數
+ */
+export async function sendEmail(options: {
+  to: string;
+  subject: string;
+  html: string;
+  from?: string;
+}) {
+  try {
+    await resend.emails.send({
+      from: options.from || FROM_EMAIL,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+    console.log('✅ 郵件已發送至:', options.to);
+  } catch (error) {
+    console.error('❌ 發送郵件失敗:', error);
+    throw error;
+  }
+}
+
+/**
+ * 生成訂房確認信的 HTML 內容
+ */
+export function getBookingConfirmationEmailHtml(data: {
+  customerName: string;
+  bookingId: string;
+  roomName: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalAmount: string;
+  currency: string;
+  propertyId: number;
+  roomId: number;
+}) {
+  return `
+    <h1>訂房確認</h1>
+    <p>親愛的 ${data.customerName}，</p>
+    <p>您的訂房已確認！</p>
+    
+    <h2>訂房資訊</h2>
+    <ul>
+      <li>房型：${data.roomName}</li>
+      <li>入住日期：${data.checkInDate}</li>
+      <li>退房日期：${data.checkOutDate}</li>
+      <li>總金額：¥${data.totalAmount} ${data.currency}</li>
+    </ul>
+    
+    <p>訂單編號：${data.bookingId}</p>
+    
+    <p>期待您的光臨！</p>
+    <p>innbest.ai 團隊</p>
+  `;
+}
+
+/**
+ * 發送管理員警報
+ */
+export async function sendAdminAlert(options: {
+  subject: string;
+  message: string;
+  details?: any;
+  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+}) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: `[${options.level}] ${options.subject}`,
+      html: `
+        <h1>管理員警報: ${options.subject}</h1>
+        <p><strong>等級:</strong> ${options.level}</p>
+        <p>${options.message}</p>
+        ${options.details ? `<h2>詳情:</h2><pre>${JSON.stringify(options.details, null, 2)}</pre>` : ''}
+        <p>請立即處理。</p>
+        <p>innbest.ai 自動警報系統</p>
+      `,
+    });
+    console.log('✅ 管理員警報已發送');
+  } catch (error) {
+    console.error('❌ 發送管理員警報失敗:', error);
+  }
+}
+
+/**
  * 發送訂房確認信
  */
 export async function sendBookingConfirmation(booking: Booking) {

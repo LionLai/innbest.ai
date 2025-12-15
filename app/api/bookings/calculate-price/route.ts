@@ -187,8 +187,10 @@ export async function POST(request: Request) {
           
           // 只計算在查詢範圍內的日期（不包含退房日）
           if (dateStr >= startDate && dateStr < endDate) {
-            priceBreakdown[dateStr] = calendarEntry.price1;
-            totalAmount += calendarEntry.price1;
+            // 四捨五入到整數（日元無小數）
+            const roundedPrice = Math.round(calendarEntry.price1);
+            priceBreakdown[dateStr] = roundedPrice;
+            totalAmount += roundedPrice;
           }
         }
       }
