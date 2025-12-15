@@ -25,20 +25,44 @@ export async function syncBookingToBeds24(bookingId: string): Promise<void> {
       throw new Error(`訂單不存在: ${bookingId}`);
     }
 
-    if (booking.status !== BookingStatus.PAYMENT_COMPLETED) {
+    // 2. 檢查是否已經同步過（冪等性保護）
+    if (booking.beds24BookingId) {
+      console.log(`✅ [Beds24 Sync] 訂單已同步過，Beds24 ID: ${booking.beds24BookingId}，跳過處理`);
+      return;
+    }
+
+    // 3. 檢查訂單狀態
+    if (booking.status === BookingStatus.CONFIRMED) {
+      console.log(`✅ [Beds24 Sync] 訂單已確認，跳過處理`);
+      return;
+    }
+
+    if (booking.status === BookingStatus.REFUNDED || 
+        booking.status === BookingStatus.BEDS24_FAILED) {
+      console.log(`⚠️  [Beds24 Sync] 訂單已退款或失敗，跳過處理`);
+      return;
+    }
+
+    if (booking.status !== BookingStatus.PAYMENT_COMPLETED && 
+        booking.status !== BookingStatus.BEDS24_CREATING) {
       throw new Error(`訂單狀態不正確: ${booking.status}`);
     }
 
-    // 2. 更新狀態為「正在創建 Beds24 訂單」
-    await prisma.booking.update({
-      where: { id: bookingId },
-      data: { status: BookingStatus.BEDS24_CREATING },
-    });
+    // 4. 更新狀態為「正在創建 Beds24 訂單」（如果還不是的話）
+    if (booking.status !== BookingStatus.BEDS24_CREATING) {
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: { status: BookingStatus.BEDS24_CREATING },
+      });
+      console.log(`📝 [Beds24 Sync] 訂單狀態已更新為 BEDS24_CREATING`);
+    } else {
+      console.log(`⚠️  [Beds24 Sync] 訂單已在創建中，繼續處理`);
+    }
 
-    // 3. 嘗試創建 Beds24 訂單（帶重試）
+    // 5. 嘗試創建 Beds24 訂單（帶重試）
     const beds24BookingId = await createBeds24BookingWithRetry(booking);
 
-    // 4. 更新訂單狀態為「Beds24 已確認」
+    // 6. 更新訂單狀態為「Beds24 已確認」
     await prisma.booking.update({
       where: { id: bookingId },
       data: { 
@@ -47,7 +71,7 @@ export async function syncBookingToBeds24(bookingId: string): Promise<void> {
       },
     });
 
-    // 5. 發送確認郵件給客戶
+    // 7. 發送確認郵件給客戶
     await sendBookingConfirmationEmail(booking);
 
     console.log(`✅ [Beds24 Sync] 訂單同步成功: ${bookingId} -> Beds24 ID: ${beds24BookingId}`);

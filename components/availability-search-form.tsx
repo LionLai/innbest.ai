@@ -12,14 +12,24 @@ import type { RoomAvailability, HotelProperty } from "@/lib/types/hotel";
 
 interface AvailabilitySearchFormProps {
   properties: HotelProperty[];
+  defaultPropertyId?: number;
+  defaultRoomId?: number;
+  defaultCheckIn?: string;
+  defaultCheckOut?: string;
 }
 
-export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormProps) {
+export function AvailabilitySearchForm({ 
+  properties, 
+  defaultPropertyId,
+  defaultRoomId,
+  defaultCheckIn = "",
+  defaultCheckOut = ""
+}: AvailabilitySearchFormProps) {
   const router = useRouter();
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [selectedPropertyId, setSelectedPropertyId] = useState<number | "">("");
-  const [selectedRoomId, setSelectedRoomId] = useState<number | "">("");
+  const [startDate, setStartDate] = useState(defaultCheckIn);
+  const [endDate, setEndDate] = useState(defaultCheckOut);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<number | "">(defaultPropertyId || "");
+  const [selectedRoomId, setSelectedRoomId] = useState<number | "">(defaultRoomId || "");
   const [isLoading, setIsLoading] = useState(false);
   const [availability, setAvailability] = useState<RoomAvailability[]>([]);
   const [error, setError] = useState<string | null>(null);

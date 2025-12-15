@@ -7,7 +7,8 @@
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "images:generate": "node scripts/generate-images-config.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

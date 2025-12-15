@@ -25,9 +25,6 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/hotels" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              飯店據點
-            </Link>
             <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
               {t.powerStack.badge}
             </button>
@@ -40,6 +37,12 @@ export function Header() {
             <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
               {t.contact.title}
             </button>
+            <Link href="/hotels" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
+              飯店據點
+            </Link>
+            <Link href="/availability" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
+              查詢空房
+            </Link>
           </nav>
 
           {/* Actions */}
@@ -61,6 +64,11 @@ export function Header() {
                   <Link href="/hotels" onClick={() => setIsOpen(false)}>
                     <Button variant="ghost" className="justify-start w-full">
                       飯店據點
+                    </Button>
+                  </Link>
+                  <Link href="/availability" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="justify-start w-full">
+                      查詢空房
                     </Button>
                   </Link>
                   <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>

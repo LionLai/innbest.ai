@@ -88,39 +88,79 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   console.log('🎉 處理訂單付款成功:', bookingId);
 
-  // 1. 創建 Payment 記錄
-  const payment = await prisma.payment.create({
-    data: {
-      stripePaymentIntentId: session.payment_intent as string,
-      stripeCheckoutId: session.id,
-      amount: session.amount_total || 0,
-      currency: session.currency?.toUpperCase() || 'JPY',
-      status: PaymentStatus.SUCCEEDED,
-      paidAt: new Date(),
-      metadata: session.metadata || undefined,
-    },
+  // 1. 檢查 Payment 是否已存在（冪等性保護）
+  const existingPayment = await prisma.payment.findUnique({
+    where: { stripePaymentIntentId: session.payment_intent as string },
   });
 
-  console.log('✅ Payment 記錄已創建:', payment.id);
+  let payment;
+  if (existingPayment) {
+    console.log('⚠️  Payment 已存在，跳過創建:', existingPayment.id);
+    payment = existingPayment;
+  } else {
+    // 創建 Payment 記錄
+    payment = await prisma.payment.create({
+      data: {
+        stripePaymentIntentId: session.payment_intent as string,
+        stripeCheckoutId: session.id,
+        amount: session.amount_total || 0,
+        currency: session.currency?.toUpperCase() || 'JPY',
+        status: PaymentStatus.SUCCEEDED,
+        paidAt: new Date(),
+        metadata: session.metadata || undefined,
+      },
+    });
+    console.log('✅ Payment 記錄已創建:', payment.id);
+  }
 
-  // 2. 更新訂單狀態並關聯 Payment
-  const booking = await prisma.booking.update({
+  // 2. 獲取並檢查 Booking 狀態
+  const currentBooking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    data: { 
-      status: BookingStatus.PAYMENT_COMPLETED,
-      paymentId: payment.id,
-      updatedAt: new Date(),
-    },
   });
 
-  // 3. 觸發後台任務：創建 Beds24 訂單
-  // 這裡使用簡單的異步調用，未來可以改用 Queue (例如 Inngest, BullMQ)
+  if (!currentBooking) {
+    console.error('❌ 訂單不存在:', bookingId);
+    return;
+  }
+
+  // 如果訂單已經是 CONFIRMED 或更後面的狀態，說明已經處理過了
+  if (currentBooking.status === BookingStatus.CONFIRMED) {
+    console.log('⚠️  訂單已確認，跳過處理:', bookingId);
+    return;
+  }
+
+  if (currentBooking.status === BookingStatus.REFUNDED || 
+      currentBooking.status === BookingStatus.BEDS24_FAILED) {
+    console.log('⚠️  訂單已退款或失敗，跳過處理:', bookingId);
+    return;
+  }
+
+  // 3. 更新訂單狀態並關聯 Payment（只在 PENDING 或 PAYMENT_PROCESSING 時更新）
+  if (currentBooking.status === BookingStatus.PENDING || 
+      currentBooking.status === BookingStatus.PAYMENT_PROCESSING) {
+    await prisma.booking.update({
+      where: { id: bookingId },
+      data: { 
+        status: BookingStatus.PAYMENT_COMPLETED,
+        paymentId: payment.id,
+        updatedAt: new Date(),
+      },
+    });
+    console.log('✅ 訂單狀態已更新為 PAYMENT_COMPLETED');
+  } else if (currentBooking.status === BookingStatus.PAYMENT_COMPLETED) {
+    console.log('⚠️  訂單已是 PAYMENT_COMPLETED 狀態，繼續處理同步');
+  }
+
+  // 3. 同步訂單到 Beds24（等待完成以確保在 Vercel 函數終止前完成）
   console.log('🔄 開始同步訂單到 Beds24...');
   
-  // 不等待完成，避免 Webhook 超時
-  syncBookingToBeds24(bookingId).catch((err) => {
-    console.error('❌ 同步 Beds24 失敗 (將在後台重試):', err);
-  });
+  try {
+    await syncBookingToBeds24(bookingId);
+    console.log('✅ Beds24 同步成功:', bookingId);
+  } catch (err) {
+    console.error('❌ 同步 Beds24 失敗 (已自動退款):', err);
+    // 注意：失敗處理（包括自動退款）已在 syncBookingToBeds24 中完成
+  }
 
   console.log('✅ Webhook 處理完成:', bookingId);
 }

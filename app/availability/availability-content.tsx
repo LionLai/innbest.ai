@@ -1,13 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { HotelPropertyCard } from "@/components/hotel-property-card";
+import { useSearchParams } from "next/navigation";
+import { AvailabilitySearchForm } from "@/components/availability-search-form";
 import type { HotelProperty } from "@/lib/types/hotel";
 
-export function HotelsContent() {
+// 計算預設日期的輔助函數
+function getDefaultDates() {
+  const today = new Date();
+  const checkIn = today.toISOString().split('T')[0]; // 今天
+  
+  const checkOutDate = new Date(today);
+  checkOutDate.setDate(checkOutDate.getDate() + 30); // 30天後
+  const checkOut = checkOutDate.toISOString().split('T')[0];
+  
+  return { checkIn, checkOut };
+}
+
+export function AvailabilityContent() {
   const [properties, setProperties] = useState<HotelProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  
+  // 從 URL 參數獲取預選的 propertyId 和 roomId
+  const preselectedPropertyId = searchParams.get('propertyId');
+  const preselectedRoomId = searchParams.get('roomId');
+  
+  // 從 URL 參數獲取 checkin 和 checkout，如果沒有則使用預設值
+  const defaultDates = getDefaultDates();
+  const preselectedCheckIn = searchParams.get('checkin') || defaultDates.checkIn;
+  const preselectedCheckOut = searchParams.get('checkout') || defaultDates.checkOut;
 
   useEffect(() => {
     fetchProperties();
@@ -63,38 +86,14 @@ export function HotelsContent() {
   }
 
   return (
-    <div className="space-y-6">
-      {properties.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">目前沒有可顯示的飯店據點</p>
-          <p className="text-sm text-muted-foreground">
-            更多據點即將推出，敬請期待
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-muted-foreground">
-              目前我們管理了 {properties.length} 間優質飯店
-            </p>
-            <button
-              onClick={fetchProperties}
-              className="text-sm text-primary hover:underline"
-            >
-              重新整理
-            </button>
-          </div>
-
-          <div className="grid gap-6">
-            {properties.map((property) => (
-              <HotelPropertyCard 
-                key={property.id} 
-                property={property}
-              />
-            ))}
-          </div>
-        </>
-      )}
+    <div className="max-w-5xl mx-auto">
+      <AvailabilitySearchForm 
+        properties={properties}
+        defaultPropertyId={preselectedPropertyId ? parseInt(preselectedPropertyId) : undefined}
+        defaultRoomId={preselectedRoomId ? parseInt(preselectedRoomId) : undefined}
+        defaultCheckIn={preselectedCheckIn}
+        defaultCheckOut={preselectedCheckOut}
+      />
     </div>
   );
 }
