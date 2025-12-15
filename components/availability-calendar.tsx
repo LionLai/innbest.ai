@@ -90,22 +90,49 @@ export function AvailabilityCalendar({
     return days;
   }, [selectedRoom, currentMonth, startDate, endDate]);
 
+  // 檢查入住到退房之間的所有晚上是否有空房
+  const checkRangeAvailability = (checkIn: string, checkOut: string): boolean => {
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    
+    // 檢查 Check-in 到 Check-out 之間的每一晚（不包括 Check-out 當天）
+    for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      if (!selectedRoom.availability[dateStr]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   // 處理日期點擊
   const handleDateClick = (dateStr: string, isAvailable: boolean) => {
-    if (!selectable || !isAvailable) return;
+    if (!selectable) return;
     
     if (!isSelectingCheckOut) {
-      // 第一次點擊：設定入住日期
+      // 第一次點擊：設定入住日期（必須有空房）
+      if (!isAvailable) return;
+      
       setSelectedCheckIn(dateStr);
       setSelectedCheckOut(null);
       setIsSelectingCheckOut(true);
     } else {
       // 第二次點擊：設定退房日期
       if (selectedCheckIn && dateStr > selectedCheckIn) {
-        setSelectedCheckOut(dateStr);
-        setIsSelectingCheckOut(false);
+        // 退房日期不需要有空房，但要檢查中間的每一晚都有空房
+        if (checkRangeAvailability(selectedCheckIn, dateStr)) {
+          setSelectedCheckOut(dateStr);
+          setIsSelectingCheckOut(false);
+        } else {
+          // 如果中間有無空房的日期，提示用戶
+          alert('所選日期範圍內有部分日期無空房，請重新選擇');
+          setSelectedCheckIn(null);
+          setSelectedCheckOut(null);
+          setIsSelectingCheckOut(false);
+        }
       } else {
-        // 如果選擇的日期在入住日期之前，重新開始
+        // 如果選擇的日期在入住日期之前或相同，重新開始（必須有空房）
+        if (!isAvailable) return;
         setSelectedCheckIn(dateStr);
         setSelectedCheckOut(null);
       }
@@ -311,9 +338,20 @@ export function AvailabilityCalendar({
               const isInSelectedRange = selectedCheckIn && selectedCheckOut && 
                 day.date > selectedCheckIn && day.date < selectedCheckOut;
               
+              // 判斷是否可作為退房日期（在選擇退房時，Check-in 之後且範圍內全部有房的日期）
+              const canBeCheckOut = isSelectingCheckOut && selectedCheckIn && 
+                day.date > selectedCheckIn && 
+                checkRangeAvailability(selectedCheckIn, day.date);
+              
               // 判斷是否在 hover 預覽範圍內
               const isInHoverRange = isSelectingCheckOut && selectedCheckIn && hoveredDate &&
                 day.date > selectedCheckIn && day.date <= hoveredDate;
+              
+              // 判斷是否可以點擊
+              const isClickable = selectable && (
+                (!isSelectingCheckOut && day.isAvailable) ||  // 選擇 Check-in 時必須有空房
+                (isSelectingCheckOut && canBeCheckOut)         // 選擇 Check-out 時範圍內有房即可
+              );
               
               return (
                 <div
@@ -324,17 +362,20 @@ export function AvailabilityCalendar({
                   className={`
                     relative aspect-square border rounded-md sm:rounded-lg p-1 sm:p-2 
                     transition-all duration-200 flex flex-col
-                    ${selectable && day.isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}
+                    ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed'}
                     ${day.isInRange ? 'ring-1 sm:ring-2 ring-primary/20' : ''}
                     ${day.isToday ? 'border-primary border-2' : ''}
                     ${isSelected ? 'ring-2 ring-blue-500 bg-blue-100 dark:bg-blue-900/30' : ''}
                     ${isInSelectedRange ? 'bg-blue-50 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800' : ''}
-                    ${isInHoverRange && day.isAvailable ? 'bg-blue-50 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800 opacity-70' : ''}
+                    ${isInHoverRange && canBeCheckOut ? 'bg-blue-50 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800 opacity-70' : ''}
                     ${!isSelected && !isInSelectedRange && !isInHoverRange && day.isAvailable 
                       ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-950/30' 
                       : ''}
-                    ${!isSelected && !isInSelectedRange && !day.isAvailable 
+                    ${!isSelected && !isInSelectedRange && !isInHoverRange && !day.isAvailable && !canBeCheckOut
                       ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800' 
+                      : ''}
+                    ${!isSelected && !isInSelectedRange && !isInHoverRange && canBeCheckOut && !day.isAvailable
+                      ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-300 dark:border-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-950/30' 
                       : ''}
                   `}
                 >
@@ -420,10 +461,18 @@ export function AvailabilityCalendar({
                 <span className="text-muted-foreground">無空房</span>
               </div>
               {selectable && (
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500 shrink-0" />
-                  <span className="text-muted-foreground">已選擇</span>
-                </div>
+                <>
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500 shrink-0" />
+                    <span className="text-muted-foreground">已選擇</span>
+                  </div>
+                  {isSelectingCheckOut && (
+                    <div className="flex items-center gap-1.5 sm:gap-2 col-span-2 sm:col-span-1">
+                      <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-300 dark:border-yellow-700 shrink-0" />
+                      <span className="text-muted-foreground">可退房日</span>
+                    </div>
+                  )}
+                </>
               )}
               {!selectable && (
                 <div className="flex items-center gap-1.5 sm:gap-2">
