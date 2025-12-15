@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 import type { HotelProperty } from "@/lib/types/hotel";
 import { 
   getPropertyPrimaryImage, 
@@ -95,16 +98,25 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
                       key={room.id}
                       className="flex flex-col rounded-lg border bg-card hover:shadow-md transition-shadow overflow-hidden"
                     >
-                      {/* 房間圖片 */}
+                      {/* 房間圖片 - 可點擊查看詳情 */}
                       {hasImages && roomImage ? (
-                        <div className="relative w-full h-48 bg-muted">
+                        <Link 
+                          href={`/rooms/${property.id}/${room.id}`}
+                          className="relative w-full h-48 bg-muted group cursor-pointer"
+                        >
                           <Image
                             src={roomImage.path}
                             alt={roomImage.alt}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform group-hover:scale-105"
                           />
-                        </div>
+                          {/* 懸浮提示 */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-3">
+                              <Eye className="h-5 w-5 text-primary" />
+                            </div>
+                          </div>
+                        </Link>
                       ) : (
                         <div className="w-full h-48 bg-muted flex items-center justify-center text-muted-foreground">
                           暫無圖片
@@ -133,24 +145,38 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
                           )}
                         </div>
 
-                        {/* 預訂按鈕 */}
-                        <button
-                          onClick={() => {
-                            // 計算預設日期（今天和30天後）
-                            const today = new Date();
-                            const checkIn = today.toISOString().split('T')[0];
-                            
-                            const checkOutDate = new Date(today);
-                            checkOutDate.setDate(checkOutDate.getDate() + 30);
-                            const checkOut = checkOutDate.toISOString().split('T')[0];
-                            
-                            // 導航到查詢空房頁面，並預選房型及日期
-                            router.push(`/availability?propertyId=${property.id}&roomId=${room.id}&checkin=${checkIn}&checkout=${checkOut}`);
-                          }}
-                          className="mt-auto w-full bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded-md font-medium transition-colors"
-                        >
-                          預訂房間
-                        </button>
+                        {/* 按鈕組 */}
+                        <div className="mt-auto flex gap-2">
+                          <Link 
+                            href={`/rooms/${property.id}/${room.id}`}
+                            className="flex-1"
+                          >
+                            <Button
+                              variant="outline"
+                              className="w-full"
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              查看詳情
+                            </Button>
+                          </Link>
+                          <button
+                            onClick={() => {
+                              // 計算預設日期（今天和30天後）
+                              const today = new Date();
+                              const checkIn = today.toISOString().split('T')[0];
+                              
+                              const checkOutDate = new Date(today);
+                              checkOutDate.setDate(checkOutDate.getDate() + 30);
+                              const checkOut = checkOutDate.toISOString().split('T')[0];
+                              
+                              // 導航到查詢空房頁面，並預選房型及日期
+                              router.push(`/availability?propertyId=${property.id}&roomId=${room.id}&checkin=${checkIn}&checkout=${checkOut}`);
+                            }}
+                            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded-md font-medium transition-colors"
+                          >
+                            預訂
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );

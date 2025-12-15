@@ -4,28 +4,30 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/sections/footer";
 import { SessionInitializer } from "@/components/session-initializer";
 import { PropertiesProvider } from "@/contexts/properties-context";
-import { HotelsContent } from "./hotels-content";
+import { RoomDetailContent } from "./room-detail-content";
 
 export const metadata = {
-  title: "飯店據點 | innbest.ai - 東京飯店投資",
-  description: "瀏覽我們管理的飯店據點，查詢空房狀態，體驗 AI 智能管理的服務品質",
+  title: "房間詳情 | innbest.ai - 東京飯店投資",
+  description: "查看房間詳細資訊、照片及設施，立即預訂您理想的住宿",
 };
 
-export default function HotelsPage() {
+interface PageProps {
+  params: Promise<{
+    propertyId: string;
+    roomId: string;
+  }>;
+}
+
+export default async function RoomDetailPage({ params }: PageProps) {
+  // Next.js 15: params 現在是 Promise，需要 await
+  const { propertyId, roomId } = await params;
+  
   return (
     <ClientLanguageProvider locale="zh-TW">
       <SessionInitializer />
       <PropertiesProvider>
         <Header />
         <main className="min-h-screen pt-20">
-        <div className="container mx-auto py-12 px-4">
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">我們的飯店據點</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              探索我們管理的優質飯店，查詢空房狀態，享受 AI 智能管理帶來的卓越體驗
-            </p>
-          </div>
-
           <Suspense
             fallback={
               <div className="flex items-center justify-center min-h-[400px]">
@@ -36,11 +38,13 @@ export default function HotelsPage() {
               </div>
             }
           >
-            <HotelsContent />
+            <RoomDetailContent 
+              propertyId={parseInt(propertyId)} 
+              roomId={parseInt(roomId)} 
+            />
           </Suspense>
-        </div>
-      </main>
-      <Footer />
+        </main>
+        <Footer />
       </PropertiesProvider>
     </ClientLanguageProvider>
   );

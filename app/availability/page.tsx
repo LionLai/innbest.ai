@@ -3,6 +3,7 @@ import { ClientLanguageProvider } from "@/components/client-language-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/sections/footer";
 import { SessionInitializer } from "@/components/session-initializer";
+import { PropertiesProvider } from "@/contexts/properties-context";
 import { AvailabilityContent } from "./availability-content";
 
 export const metadata = {
@@ -14,8 +15,9 @@ export default function AvailabilityPage() {
   return (
     <ClientLanguageProvider locale="zh-TW">
       <SessionInitializer />
-      <Header />
-      <main className="min-h-screen pt-20">
+      <PropertiesProvider>
+        <Header />
+        <main className="min-h-screen pt-20">
         <div className="container mx-auto py-12 px-4">
           <div className="mb-12 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">查詢空房</h1>
@@ -39,6 +41,7 @@ export default function AvailabilityPage() {
         </div>
       </main>
       <Footer />
+      </PropertiesProvider>
     </ClientLanguageProvider>
   );
 }
