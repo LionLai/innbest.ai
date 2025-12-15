@@ -86,7 +86,8 @@ export async function POST(req: Request) {
         );
       }
 
-      totalPrice += price;
+      // 四捨五入到整數（日元無小數）
+      totalPrice += Math.round(price);
     }
 
     // 3. 建立 Stripe PaymentIntent

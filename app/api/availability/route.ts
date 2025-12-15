@@ -113,7 +113,8 @@ export async function GET(request: Request) {
               // 展開日期範圍內的每一天
               for (let d = new Date(fromDate); d <= toDate; d.setDate(d.getDate() + 1)) {
                 const dateStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
-                prices[dateStr] = calendarEntry.price1;
+                // 四捨五入到整數（日元無小數）
+                prices[dateStr] = Math.round(calendarEntry.price1);
               }
             }
           }
