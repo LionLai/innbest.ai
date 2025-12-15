@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { RoomAvailability } from "@/lib/types/hotel";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface AvailabilityCalendarProps {
   availability: RoomAvailability[];
   startDate: string;
   endDate: string;
-  onBook?: (room: RoomAvailability) => void;
+  onBook?: (room: RoomAvailability, checkIn: string, checkOut: string) => void;
+  selectable?: boolean;  // 新增：是否可選擇日期
 }
 
 interface DayData {
@@ -27,10 +28,17 @@ export function AvailabilityCalendar({
   availability, 
   startDate, 
   endDate,
-  onBook 
+  onBook,
+  selectable = true,  // 預設為可選擇
 }: AvailabilityCalendarProps) {
   const [selectedRoomIndex, setSelectedRoomIndex] = useState(0);
   const [currentMonth, setCurrentMonth] = useState(() => new Date(startDate));
+  
+  // 日期選擇狀態
+  const [selectedCheckIn, setSelectedCheckIn] = useState<string | null>(null);
+  const [selectedCheckOut, setSelectedCheckOut] = useState<string | null>(null);
+  const [isSelectingCheckOut, setIsSelectingCheckOut] = useState(false);
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
 
   const selectedRoom = availability[selectedRoomIndex];
 
@@ -81,6 +89,62 @@ export function AvailabilityCalendar({
     
     return days;
   }, [selectedRoom, currentMonth, startDate, endDate]);
+
+  // 處理日期點擊
+  const handleDateClick = (dateStr: string, isAvailable: boolean) => {
+    if (!selectable || !isAvailable) return;
+    
+    if (!isSelectingCheckOut) {
+      // 第一次點擊：設定入住日期
+      setSelectedCheckIn(dateStr);
+      setSelectedCheckOut(null);
+      setIsSelectingCheckOut(true);
+    } else {
+      // 第二次點擊：設定退房日期
+      if (selectedCheckIn && dateStr > selectedCheckIn) {
+        setSelectedCheckOut(dateStr);
+        setIsSelectingCheckOut(false);
+      } else {
+        // 如果選擇的日期在入住日期之前，重新開始
+        setSelectedCheckIn(dateStr);
+        setSelectedCheckOut(null);
+      }
+    }
+  };
+  
+  // 清除選擇
+  const handleClearSelection = () => {
+    setSelectedCheckIn(null);
+    setSelectedCheckOut(null);
+    setIsSelectingCheckOut(false);
+    setHoveredDate(null);
+  };
+  
+  // 計算選中範圍的總價
+  const selectedRangePrices = useMemo(() => {
+    if (!selectedCheckIn || !selectedCheckOut || !selectedRoom.prices) {
+      return null;
+    }
+    
+    const prices: Record<string, number> = {};
+    let total = 0;
+    
+    const start = new Date(selectedCheckIn);
+    const end = new Date(selectedCheckOut);
+    
+    for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      const price = selectedRoom.prices[dateStr];
+      if (price) {
+        prices[dateStr] = price;
+        total += price;
+      }
+    }
+    
+    const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return { prices, total, nights };
+  }, [selectedCheckIn, selectedCheckOut, selectedRoom.prices]);
 
   // 導航到上個月
   const goToPrevMonth = () => {
@@ -142,26 +206,68 @@ export function AvailabilityCalendar({
       <Card>
         <CardHeader className="pb-3 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="space-y-1">
+            <div className="space-y-1 flex-1">
               <CardTitle className="text-lg sm:text-xl">{selectedRoom.name}</CardTitle>
               <CardDescription className="text-xs sm:text-sm">
-                <span className="block sm:inline">{startDate} 至 {endDate}</span>
-                {selectedRoom.currency && (
-                  <span className="block sm:inline sm:ml-2 text-xs">
-                    貨幣：{selectedRoom.currency}
-                  </span>
+                {selectable ? (
+                  <>
+                    {selectedCheckIn && selectedCheckOut ? (
+                      <span className="font-medium text-primary">
+                        {selectedCheckIn} 至 {selectedCheckOut} ({selectedRangePrices?.nights} 晚)
+                      </span>
+                    ) : selectedCheckIn ? (
+                      <span className="text-muted-foreground">
+                        入住：{selectedCheckIn} → 請選擇退房日期
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        點擊日曆選擇入住和退房日期
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span className="block sm:inline">{startDate} 至 {endDate}</span>
+                    {selectedRoom.currency && (
+                      <span className="block sm:inline sm:ml-2 text-xs">
+                        貨幣：{selectedRoom.currency}
+                      </span>
+                    )}
+                  </>
                 )}
               </CardDescription>
             </div>
-            {isFullyAvailable && onBook && (
-              <Button 
-                onClick={() => onBook(selectedRoom)}
-                className="w-full sm:w-auto"
-                size="sm"
-              >
-                立即預訂
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {selectedCheckIn && selectable && (
+                <Button 
+                  onClick={handleClearSelection}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  清除
+                </Button>
+              )}
+              {selectedCheckIn && selectedCheckOut && selectedRangePrices && onBook && (
+                <Button 
+                  onClick={() => onBook(selectedRoom, selectedCheckIn, selectedCheckOut)}
+                  className="w-full sm:w-auto"
+                  size="sm"
+                >
+                  立即預訂 ¥{selectedRangePrices.total.toLocaleString()}
+                </Button>
+              )}
+              {!selectable && isFullyAvailable && onBook && (
+                <Button 
+                  onClick={() => onBook(selectedRoom, startDate, endDate)}
+                  className="w-full sm:w-auto"
+                  size="sm"
+                >
+                  立即預訂
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -207,18 +313,36 @@ export function AvailabilityCalendar({
 
               const dayNum = day.dateObj.getDate();
               
+              // 判斷是否在選中範圍內
+              const isSelected = day.date === selectedCheckIn || day.date === selectedCheckOut;
+              const isInSelectedRange = selectedCheckIn && selectedCheckOut && 
+                day.date > selectedCheckIn && day.date < selectedCheckOut;
+              
+              // 判斷是否在 hover 預覽範圍內
+              const isInHoverRange = isSelectingCheckOut && selectedCheckIn && hoveredDate &&
+                day.date > selectedCheckIn && day.date <= hoveredDate;
+              
               return (
                 <div
                   key={day.date}
+                  onClick={() => handleDateClick(day.date, day.isAvailable)}
+                  onMouseEnter={() => selectable && setHoveredDate(day.date)}
+                  onMouseLeave={() => setHoveredDate(null)}
                   className={`
                     relative aspect-square border rounded-md sm:rounded-lg p-1 sm:p-2 
                     transition-all duration-200 flex flex-col
+                    ${selectable && day.isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}
                     ${day.isInRange ? 'ring-1 sm:ring-2 ring-primary/20' : ''}
                     ${day.isToday ? 'border-primary border-2' : ''}
-                    ${day.isAvailable 
+                    ${isSelected ? 'ring-2 ring-blue-500 bg-blue-100 dark:bg-blue-900/30' : ''}
+                    ${isInSelectedRange ? 'bg-blue-50 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800' : ''}
+                    ${isInHoverRange && day.isAvailable ? 'bg-blue-50 dark:bg-blue-950/10 border-blue-200 dark:border-blue-800 opacity-70' : ''}
+                    ${!isSelected && !isInSelectedRange && !isInHoverRange && day.isAvailable 
                       ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-950/30' 
-                      : 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800'
-                    }
+                      : ''}
+                    ${!isSelected && !isInSelectedRange && !day.isAvailable 
+                      ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800' 
+                      : ''}
                   `}
                 >
                   {/* 日期 */}
@@ -226,8 +350,20 @@ export function AvailabilityCalendar({
                     {dayNum}
                   </div>
                   
+                  {/* 選中日期標記 */}
+                  {isSelected && (
+                    <div className="absolute top-0.5 left-0.5 sm:top-1 sm:left-1">
+                      <Badge 
+                        variant="default" 
+                        className="h-4 sm:h-5 px-1 text-[8px] sm:text-[10px] bg-blue-600"
+                      >
+                        {day.date === selectedCheckIn ? '入住' : '退房'}
+                      </Badge>
+                    </div>
+                  )}
+                  
                   {/* 狀態標記 - 手機版簡化為小圓點 */}
-                  {day.isInRange && (
+                  {day.isInRange && !isSelected && (
                     <div className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1">
                       {/* 手機版：小圓點 */}
                       <div className="sm:hidden">
@@ -290,10 +426,18 @@ export function AvailabilityCalendar({
                 <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 shrink-0" />
                 <span className="text-muted-foreground">無空房</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border-2 border-primary/20 shrink-0" />
-                <span className="text-muted-foreground">查詢範圍</span>
-              </div>
+              {selectable && (
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500 shrink-0" />
+                  <span className="text-muted-foreground">已選擇</span>
+                </div>
+              )}
+              {!selectable && (
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border-2 border-primary/20 shrink-0" />
+                  <span className="text-muted-foreground">查詢範圍</span>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

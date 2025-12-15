@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =====================================================
+// 訂單資料表（核心）
+// =====================================================
+model Booking {
+  id                String   @id @default(cuid())
+  
+  // Beds24 資訊
+  beds24BookingId   Int?     // Beds24 訂單 ID（付款後才創建）
+  propertyId        Int
+  roomId            Int
+  roomName          String
+  
+  // 日期
+  checkIn           DateTime
+  checkOut          DateTime
+  nights            Int
+  
+  // 客人資訊
+  guestName         String
+  guestEmail        String
+  guestPhone        String
+  adults            Int
+  children          Int      @default(0)
+  specialRequests   String?  @db.Text
+  
+  // 價格
+  totalAmount       Decimal  @db.Decimal(10, 2)
+  currency          String   @default("JPY")
+  priceBreakdown    Json?    // { "2025-01-15": 12000, "2025-01-16": 12000 }
+  
+  // 狀態
+  status            BookingStatus @default(PENDING)
+  failureReason     String?  @db.Text // 失敗原因（如果有）
+  
+  // 關聯
+  paymentId         String?  @unique
+  payment           Payment? @relation(fields: [paymentId], references: [id])
+  syncLogs          SyncLog[]
+  
+  // 時間戳記
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([guestEmail])
+  @@index([checkIn])
+  @@index([status])
+  @@index([beds24BookingId])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING                 // 已創建，等待付款
+  PAYMENT_PROCESSING      // 付款處理中
+  PAYMENT_COMPLETED       // 付款成功，等待創建 Beds24 訂單
+  BEDS24_CREATING         // 正在創建 Beds24 訂單
+  CONFIRMED               // Beds24 訂單已確認
+  BEDS24_FAILED           // Beds24 創建失敗，已退款
+  CANCELLED               // 用戶取消
+  REFUNDED                // 已退款
+  EXPIRED                 // 付款逾時（15分鐘未付款）
+}
+
+// =====================================================
+// 金流資料表
+// =====================================================
+model Payment {
+  id                    String   @id @default(cuid())
+  
+  // Stripe 資訊
+  stripePaymentIntentId String   @unique
+  stripeCheckoutId      String?
+  stripeRefundId        String?  // 退款 ID（如果有）
+  
+  // 金額
+  amount                Decimal  @db.Decimal(10, 2)
+  currency              String
+  
+  // 狀態
+  status                PaymentStatus @default(PENDING)
+  
+  // Metadata from Stripe
+  metadata              Json?
+  
+  // 錯誤處理
+  failureReason         String?  @db.Text
+  
+  // 關聯
+  booking               Booking?
+  
+  // 時間戳記
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  paidAt                DateTime?
+  refundedAt            DateTime?
+  
+  @@index([stripePaymentIntentId])
+  @@index([status])
+  @@index([paidAt])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING               // 等待付款
+  PROCESSING            // 處理中
+  SUCCEEDED             // 成功
+  FAILED                // 失敗
+  CANCELLED             // 已取消
+  REFUNDED              // 已退款
+}
+
+// =====================================================
+// Beds24 同步記錄表
+// =====================================================
+model SyncLog {
+  id                String   @id @default(cuid())
+  
+  bookingId         String
+  booking           Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  action            SyncAction   // "CREATE", "UPDATE", "CANCEL"
+  status            SyncStatus   // "SUCCESS", "FAILED", "PENDING"
+  
+  beds24Response    Json?    // Beds24 API 回應
+  errorMessage      String?  @db.Text
+  retryCount        Int      @default(0) // 重試次數
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([bookingId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("sync_logs")
+}
+
+enum SyncAction {
+  CREATE
+  UPDATE
+  CANCEL
+  REFUND
+}
+
+enum SyncStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  RETRYING
+}

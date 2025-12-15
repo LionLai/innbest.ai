@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AvailabilityCalendar } from "@/components/availability-calendar";
+import { BookingDialog } from "@/components/booking-dialog";
 import type { RoomAvailability, HotelProperty } from "@/lib/types/hotel";
 
 interface AvailabilitySearchFormProps {
@@ -22,6 +23,21 @@ export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormPro
   const [isLoading, setIsLoading] = useState(false);
   const [availability, setAvailability] = useState<RoomAvailability[]>([]);
   const [error, setError] = useState<string | null>(null);
+  
+  // 訂房彈窗狀態
+  const [bookingDialog, setBookingDialog] = useState<{
+    open: boolean;
+    room: RoomAvailability | null;
+    checkIn: string;
+    checkOut: string;
+    propertyId: number;
+  }>({
+    open: false,
+    room: null,
+    checkIn: "",
+    checkOut: "",
+    propertyId: 0,
+  });
 
   // 根據選中的飯店過濾房型
   const availableRooms = selectedPropertyId
@@ -172,21 +188,39 @@ export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormPro
 
       {/* 查詢結果 - 月曆視圖 */}
       {availability.length > 0 && (
-        <AvailabilityCalendar
-          availability={availability}
-          startDate={startDate}
-          endDate={endDate}
-          onBook={(room) => {
-            const params = new URLSearchParams({
-              roomId: room.roomId.toString(),
-              propertyId: room.propertyId.toString(),
-              startDate,
-              endDate,
-              roomName: room.name
-            });
-            router.push(`/book?${params.toString()}`);
-          }}
-        />
+        <>
+          <AvailabilityCalendar
+            availability={availability}
+            startDate={startDate}
+            endDate={endDate}
+            selectable={true}
+            onBook={(room, checkIn, checkOut) => {
+              // 打開訂房彈窗
+              setBookingDialog({
+                open: true,
+                room,
+                checkIn,
+                checkOut,
+                propertyId: room.propertyId,
+              });
+            }}
+          />
+          
+          {/* 訂房彈窗 */}
+          {bookingDialog.room && (
+            <BookingDialog
+              open={bookingDialog.open}
+              onClose={() => setBookingDialog({ 
+                ...bookingDialog, 
+                open: false 
+              })}
+              room={bookingDialog.room}
+              checkIn={bookingDialog.checkIn}
+              checkOut={bookingDialog.checkOut}
+              propertyId={bookingDialog.propertyId}
+            />
+          )}
+        </>
       )}
     </div>
   );
