@@ -30,12 +30,14 @@ export interface AvailabilitySearchParams {
   endDate: string;   // YYYY-MM-DD
 }
 
-// 簡化的空房資料型別
+// 簡化的空房資料型別（含價格）
 export interface RoomAvailability {
   roomId: number;
   propertyId: number;
   name: string;
   availability: Record<string, boolean>; // { "2025-01-01": true, ... }
+  prices?: Record<string, number>;        // { "2025-01-01": 1500, ... }
+  currency?: string;                      // 貨幣代碼，例如 "TWD", "USD"
 }
 
 // API 回應格式

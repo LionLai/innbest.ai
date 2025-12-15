@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
 import type { RoomAvailability, HotelProperty } from "@/lib/types/hotel";
 
 interface AvailabilitySearchFormProps {
@@ -169,93 +170,23 @@ export function AvailabilitySearchForm({ properties }: AvailabilitySearchFormPro
         </CardContent>
       </Card>
 
-      {/* 查詢結果 */}
+      {/* 查詢結果 - 月曆視圖 */}
       {availability.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>空房狀態</CardTitle>
-            <CardDescription>
-              {startDate} 至 {endDate}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {availability.map((room) => {
-                const dates = Object.keys(room.availability).sort();
-                const availableDates = dates.filter((date) => room.availability[date]);
-                const unavailableDates = dates.filter((date) => !room.availability[date]);
-                const isFullyAvailable = unavailableDates.length === 0 && availableDates.length > 0;
-
-                return (
-                  <div key={`${room.propertyId}-${room.roomId}`} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-4">
-                      <h4 className="font-semibold text-lg">
-                        {room.name}
-                      </h4>
-                      {isFullyAvailable && (
-                        <Button 
-                          onClick={() => {
-                            const params = new URLSearchParams({
-                              roomId: room.roomId.toString(),
-                              propertyId: room.propertyId.toString(),
-                              startDate,
-                              endDate,
-                              roomName: room.name
-                            });
-                            router.push(`/book?${params.toString()}`);
-                          }}
-                        >
-                          立即預訂
-                        </Button>
-                      )}
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
-                          有空房 ({availableDates.length} 天)
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {availableDates.length > 0 ? (
-                            availableDates.map((date) => (
-                              <span
-                                key={date}
-                                className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded"
-                              >
-                                {date}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="text-sm text-muted-foreground">無</span>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-red-600 dark:text-red-400 mb-2">
-                          無空房 ({unavailableDates.length} 天)
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {unavailableDates.length > 0 ? (
-                            unavailableDates.map((date) => (
-                              <span
-                                key={date}
-                                className="text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-2 py-1 rounded"
-                              >
-                                {date}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="text-sm text-muted-foreground">無</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+        <AvailabilityCalendar
+          availability={availability}
+          startDate={startDate}
+          endDate={endDate}
+          onBook={(room) => {
+            const params = new URLSearchParams({
+              roomId: room.roomId.toString(),
+              propertyId: room.propertyId.toString(),
+              startDate,
+              endDate,
+              roomName: room.name
+            });
+            router.push(`/book?${params.toString()}`);
+          }}
+        />
       )}
     </div>
   );

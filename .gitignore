@@ -3,6 +3,7 @@
 out/
 build/
 dist/
+docs/
 
 # 依賴套件
 node_modules/
