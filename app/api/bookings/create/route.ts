@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { beds24Client } from '@/lib/beds24-client';
+import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
 
 export async function POST(req: Request) {
   try {
+    // 從 session cookie 獲取認證 headers
+    const headers = await getBeds24Headers();
+    
     const body = await req.json();
     const { 
       paymentIntentId, 
@@ -58,7 +61,9 @@ export async function POST(req: Request) {
       apiMessage: 'Created via Innbest.ai Website',
     }];
 
+    // 呼叫 Beds24 API 創建訂單（SDK 0.2.0 無狀態設計）
     const { data: bookingResult, error: bookingError } = await beds24Client.POST('/bookings', {
+      headers,  // 每次請求傳入 token
       body: bookingData,
     });
 

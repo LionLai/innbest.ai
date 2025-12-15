@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { ClientLanguageProvider } from "@/components/client-language-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/sections/footer";
+import { SessionInitializer } from "@/components/session-initializer";
 import { HotelsContent } from "./hotels-content";
 
 export const metadata = {
@@ -12,6 +13,7 @@ export const metadata = {
 export default function HotelsPage() {
   return (
     <ClientLanguageProvider locale="zh-TW">
+      <SessionInitializer />
       <Header />
       <main className="min-h-screen pt-20">
         <div className="container mx-auto py-12 px-4">
