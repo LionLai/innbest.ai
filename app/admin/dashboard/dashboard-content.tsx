@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,11 +16,29 @@ import {
   TrendingUp,
   DollarSign,
   Home,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 
+interface DashboardStats {
+  totalBookings: number;
+  websiteBookings: number;
+  externalBookings: number;
+  totalRevenue: number;
+  activeRooms: number;
+  occupancyRate: number;
+  growth: {
+    bookings: string;
+    revenue: string;
+  };
+  totalProperties: number;
+}
+
 export function DashboardContent() {
   const { user, signOut, isAdmin } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignOut = async () => {
     try {
@@ -28,6 +47,33 @@ export function DashboardContent() {
       console.error('Sign out error:', error);
     }
   };
+
+  // 獲取統計數據
+  const fetchStats = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/admin/stats?period=month');
+      const result = await response.json();
+      
+      if (result.success) {
+        setStats(result.data.stats);
+      } else {
+        setError(result.error || '載入統計失敗');
+      }
+    } catch (err) {
+      setError('網路錯誤，請稍後再試');
+      console.error('Failed to fetch stats:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 初始載入
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   return (
     <ProtectedRoute requireAdmin={true}>
@@ -68,74 +114,115 @@ export function DashboardContent() {
         <div className="container mx-auto px-4 py-8">
           {/* Welcome Section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">歡迎回來！</h2>
-            <p className="text-muted-foreground">
-              這是您的管理控制面板，快速查看系統狀態並管理各項功能
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-bold mb-2">歡迎回來！</h2>
+                <p className="text-muted-foreground">
+                  這是您的管理控制面板，快速查看系統狀態並管理各項功能
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchStats}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                重新整理
+              </Button>
+            </div>
+            {error && (
+              <div className="mt-4 p-4 rounded-lg bg-destructive/10 text-destructive text-sm">
+                {error}
+              </div>
+            )}
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  總訂單數
-                </CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">245</div>
-                <p className="text-xs text-muted-foreground">
-                  較上月 +20.1%
-                </p>
-              </CardContent>
-            </Card>
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">載入中...</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-8 bg-muted animate-pulse rounded"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : stats ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    總訂單數
+                  </CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalBookings}</div>
+                  <p className="text-xs text-muted-foreground">
+                    較上月 {stats.growth.bookings}
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="default" className="text-xs">
+                      網站 {stats.websiteBookings}
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      外部 {stats.externalBookings}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  總收入
-                </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">¥1,234,567</div>
-                <p className="text-xs text-muted-foreground">
-                  較上月 +15.3%
-                </p>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    總收入
+                  </CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">¥{stats.totalRevenue.toLocaleString()}</div>
+                  <p className="text-xs text-muted-foreground">
+                    較上月 {stats.growth.revenue}
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  活躍房源
-                </CardTitle>
-                <Building2 className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground">
-                  分布於 3 個物業
-                </p>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    活躍房源
+                  </CardTitle>
+                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.activeRooms}</div>
+                  <p className="text-xs text-muted-foreground">
+                    分布於 {stats.totalProperties} 個物業
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  入住率
-                </CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">87.5%</div>
-                <p className="text-xs text-muted-foreground">
-                  較上月 +3.2%
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    入住率
+                  </CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.occupancyRate}%</div>
+                  <p className="text-xs text-muted-foreground">
+                    近 30 天平均
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          ) : null}
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
