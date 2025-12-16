@@ -75,7 +75,7 @@ export async function createSession(beds24Token: string, organization?: string):
   const jwt = await new EncryptJWT(sessionData)
     .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
     .setIssuedAt()
-    .setExpirationTime('1.5d') // 1.5 天有效期
+    .setExpirationTime('12h') // 12 小時有效期
     .encrypt(JWT_SECRET);
 
   // 設置 HTTP-only cookie
@@ -83,11 +83,11 @@ export async function createSession(beds24Token: string, organization?: string):
     httpOnly: true,    // JavaScript 無法訪問
     secure: process.env.NODE_ENV === 'production', // 生產環境只在 HTTPS
     sameSite: 'strict', // 防 CSRF
-    maxAge: 60 * 60 * 36, // 1.5 天（秒）
+    maxAge: 60 * 60 * 12, // 12 小時（秒）
     path: '/',
   });
 
-  console.log('🍪 Session cookie 已設置 (HTTP-only, 有效期 1.5 天)');
+  console.log('🍪 Session cookie 已設置 (HTTP-only, 有效期 12 小時)');
 }
 
 /**
@@ -139,9 +139,9 @@ export async function getValidBeds24Token(): Promise<{
     // 檢查是否接近過期（30 分鐘內）
     const age = Date.now() - session.createdAt;
     const thirtyMinutes = 30 * 60 * 1000;
-    const oneDayHalf = 1.5 * 24 * 60 * 60 * 1000;
+    const twelveHours = 12 * 60 * 60 * 1000;
     
-    if (age < oneDayHalf - thirtyMinutes) {
+    if (age < twelveHours - thirtyMinutes) {
       console.log('✅ 使用 session cookie 中的 token');
       return {
         token: session.beds24Token,
