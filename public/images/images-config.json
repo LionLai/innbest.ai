@@ -8,13 +8,13 @@
           "path": "/images/272758/1.jpg",
           "alt": "Luce 池袋外觀",
           "isPrimary": true,
-          "order": 1
+          "order": 0
         },
         {
           "path": "/images/272758/2.jpg",
-          "alt": "Luce 池袋建築外觀",
+          "alt": "Luce 池袋建築外觀 1",
           "isPrimary": false,
-          "order": 2
+          "order": 1
         }
       ],
       "rooms": {
@@ -111,78 +111,6 @@
               "alt": "上池袋401 - 圖片 14",
               "isPrimary": false,
               "order": 14
-            },
-            {
-              "path": "/images/272758/570479/15.jpg",
-              "alt": "上池袋401 - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/272758/570479/16.jpg",
-              "alt": "上池袋401 - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/272758/570479/17.jpg",
-              "alt": "上池袋401 - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/272758/570479/18.jpg",
-              "alt": "上池袋401 - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/272758/570479/19.jpg",
-              "alt": "上池袋401 - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/272758/570479/20.jpg",
-              "alt": "上池袋401 - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/272758/570479/21.jpg",
-              "alt": "上池袋401 - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/272758/570479/22.jpg",
-              "alt": "上池袋401 - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/272758/570479/23.jpg",
-              "alt": "上池袋401 - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/272758/570479/24.jpg",
-              "alt": "上池袋401 - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/272758/570479/25.jpg",
-              "alt": "上池袋401 - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/272758/570479/26.jpg",
-              "alt": "上池袋401 - 圖片 26",
-              "isPrimary": false,
-              "order": 26
             }
           ]
         },
@@ -279,6 +207,78 @@
               "alt": "上池袋202 - 圖片 14",
               "isPrimary": false,
               "order": 14
+            },
+            {
+              "path": "/images/272758/621929/15.jpg",
+              "alt": "上池袋202 - 圖片 15",
+              "isPrimary": false,
+              "order": 15
+            },
+            {
+              "path": "/images/272758/621929/16.jpg",
+              "alt": "上池袋202 - 圖片 16",
+              "isPrimary": false,
+              "order": 16
+            },
+            {
+              "path": "/images/272758/621929/17.jpg",
+              "alt": "上池袋202 - 圖片 17",
+              "isPrimary": false,
+              "order": 17
+            },
+            {
+              "path": "/images/272758/621929/18.jpg",
+              "alt": "上池袋202 - 圖片 18",
+              "isPrimary": false,
+              "order": 18
+            },
+            {
+              "path": "/images/272758/621929/19.jpg",
+              "alt": "上池袋202 - 圖片 19",
+              "isPrimary": false,
+              "order": 19
+            },
+            {
+              "path": "/images/272758/621929/20.jpg",
+              "alt": "上池袋202 - 圖片 20",
+              "isPrimary": false,
+              "order": 20
+            },
+            {
+              "path": "/images/272758/621929/21.jpg",
+              "alt": "上池袋202 - 圖片 21",
+              "isPrimary": false,
+              "order": 21
+            },
+            {
+              "path": "/images/272758/621929/22.jpg",
+              "alt": "上池袋202 - 圖片 22",
+              "isPrimary": false,
+              "order": 22
+            },
+            {
+              "path": "/images/272758/621929/23.jpg",
+              "alt": "上池袋202 - 圖片 23",
+              "isPrimary": false,
+              "order": 23
+            },
+            {
+              "path": "/images/272758/621929/24.jpg",
+              "alt": "上池袋202 - 圖片 24",
+              "isPrimary": false,
+              "order": 24
+            },
+            {
+              "path": "/images/272758/621929/25.jpg",
+              "alt": "上池袋202 - 圖片 25",
+              "isPrimary": false,
+              "order": 25
+            },
+            {
+              "path": "/images/272758/621929/26.jpg",
+              "alt": "上池袋202 - 圖片 26",
+              "isPrimary": false,
+              "order": 26
             }
           ]
         },
@@ -375,88 +375,82 @@
               "alt": "上池袋201 - 圖片 14",
               "isPrimary": false,
               "order": 14
-            },
-            {
-              "path": "/images/272758/629760/15.jpg",
-              "alt": "上池袋201 - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/272758/629760/16.jpg",
-              "alt": "上池袋201 - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/272758/629760/17.jpg",
-              "alt": "上池袋201 - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/272758/629760/18.jpg",
-              "alt": "上池袋201 - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/272758/629760/19.jpg",
-              "alt": "上池袋201 - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/272758/629760/20.jpg",
-              "alt": "上池袋201 - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/272758/629760/21.jpg",
-              "alt": "上池袋201 - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/272758/629760/22.jpg",
-              "alt": "上池袋201 - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/272758/629760/23.jpg",
-              "alt": "上池袋201 - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/272758/629760/24.jpg",
-              "alt": "上池袋201 - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/272758/629760/25.jpg",
-              "alt": "上池袋201 - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/272758/629760/26.jpg",
-              "alt": "上池袋201 - 圖片 26",
-              "isPrimary": false,
-              "order": 26
             }
           ]
         },
         "632393": {
           "roomId": 632393,
           "name": "上池袋402",
-          "images": []
+          "images": [
+            {
+              "path": "/images/272758/632393/0.jpg",
+              "alt": "上池袋402 - 主圖",
+              "isPrimary": true,
+              "order": 0
+            },
+            {
+              "path": "/images/272758/632393/1.jpg",
+              "alt": "上池袋402 - 圖片 1",
+              "isPrimary": false,
+              "order": 1
+            },
+            {
+              "path": "/images/272758/632393/2.jpg",
+              "alt": "上池袋402 - 圖片 2",
+              "isPrimary": false,
+              "order": 2
+            },
+            {
+              "path": "/images/272758/632393/3.jpg",
+              "alt": "上池袋402 - 圖片 3",
+              "isPrimary": false,
+              "order": 3
+            },
+            {
+              "path": "/images/272758/632393/4.jpg",
+              "alt": "上池袋402 - 圖片 4",
+              "isPrimary": false,
+              "order": 4
+            },
+            {
+              "path": "/images/272758/632393/5.jpg",
+              "alt": "上池袋402 - 圖片 5",
+              "isPrimary": false,
+              "order": 5
+            },
+            {
+              "path": "/images/272758/632393/6.jpg",
+              "alt": "上池袋402 - 圖片 6",
+              "isPrimary": false,
+              "order": 6
+            },
+            {
+              "path": "/images/272758/632393/7.jpg",
+              "alt": "上池袋402 - 圖片 7",
+              "isPrimary": false,
+              "order": 7
+            },
+            {
+              "path": "/images/272758/632393/8.jpg",
+              "alt": "上池袋402 - 圖片 8",
+              "isPrimary": false,
+              "order": 8
+            },
+            {
+              "path": "/images/272758/632393/9.jpg",
+              "alt": "上池袋402 - 圖片 9",
+              "isPrimary": false,
+              "order": 9
+            },
+            {
+              "path": "/images/272758/632393/10.jpg",
+              "alt": "上池袋402 - 圖片 10",
+              "isPrimary": false,
+              "order": 10
+            }
+          ]
         }
       }
     }
   }
 }
-
