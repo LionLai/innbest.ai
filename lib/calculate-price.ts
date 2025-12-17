@@ -1,10 +1,12 @@
-import { beds24Client } from './beds24-client';
+import { beds24Client, getBeds24Headers } from './beds24-client';
 
 export interface CalculatePriceParams {
   roomId: number;
   propertyId: number;
-  startDate: string; // YYYY-MM-DD
-  endDate: string;   // YYYY-MM-DD
+  checkIn: string; // YYYY-MM-DD
+  checkOut: string;   // YYYY-MM-DD
+  adults: number;
+  children: number;
 }
 
 export interface CalculatePriceResult {
@@ -26,17 +28,20 @@ export interface CalculatePriceResult {
 /**
  * 計算房間價格的共享邏輯
  * 可以在 API route 和其他服務器端代碼中復用
+ * @param params - 計算參數（checkIn, checkOut, roomId, propertyId, adults, children）
  */
 export async function calculateRoomPrice(
-  params: CalculatePriceParams,
-  headers: Record<string, string>
+  params: CalculatePriceParams
 ): Promise<CalculatePriceResult> {
-  const { roomId, propertyId, startDate, endDate } = params;
+  const { roomId, propertyId, checkIn, checkOut } = params;
+  
+  // 獲取 Beds24 認證 headers
+  const headers = await getBeds24Headers();
 
   try {
     // 1. 驗證日期格式
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+    if (!dateRegex.test(checkIn) || !dateRegex.test(checkOut)) {
       return {
         success: false,
         error: '日期格式錯誤',
@@ -44,8 +49,8 @@ export async function calculateRoomPrice(
     }
 
     // 2. 驗證日期邏輯
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
     
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       return {
@@ -78,8 +83,8 @@ export async function calculateRoomPrice(
           query: {
             roomId: [roomId],
             propertyId: [propertyId],
-            startDate,
-            endDate,
+            startDate: checkIn,
+            endDate: checkOut,
           },
         },
       }),
@@ -89,8 +94,8 @@ export async function calculateRoomPrice(
           query: {
             roomId: [roomId],
             propertyId: [propertyId],
-            startDate,
-            endDate,
+            startDate: checkIn,
+            endDate: checkOut,
             includePrices: true,
             includeLinkedPrices: true,
           },
@@ -167,7 +172,7 @@ export async function calculateRoomPrice(
           const dateStr = d.toISOString().split('T')[0];
           
           // 只計算在查詢範圍內的日期（不包含退房日）
-          if (dateStr >= startDate && dateStr < endDate) {
+          if (dateStr >= checkIn && dateStr < checkOut) {
             // 四捨五入到整數（日元無小數）
             const roundedPrice = Math.round(calendarEntry.price1);
             priceBreakdown[dateStr] = roundedPrice;
@@ -194,16 +199,16 @@ export async function calculateRoomPrice(
       };
     }
 
-    // 10. 獲取貨幣（從 property 資料中取得，這裡先假設是 JPY）
-    const currency = priceData.currency || 'JPY';
+    // 10. 獲取貨幣（Beds24 Calendar API 不返回 currency，預設為 JPY）
+    const currency = 'JPY';
 
     return {
       success: true,
       data: {
         roomId,
         propertyId,
-        checkIn: startDate,
-        checkOut: endDate,
+        checkIn,
+        checkOut,
         nights,
         priceBreakdown,
         totalAmount,

@@ -159,3 +159,35 @@ enum SyncStatus {
   FAILED
   RETRYING
 }
+
+// =====================================================
+// 房間雜項費用表
+// =====================================================
+model RoomFee {
+  id            String   @id @default(cuid())
+  
+  // 房間識別
+  propertyId    Int      // Beds24 Property ID
+  roomId        Int      // Beds24 Room ID
+  
+  // 費用資訊
+  feeName       String   // 費用名稱（例如：清潔費、住宿稅）
+  feeNameEn     String?  // 英文名稱（選填）
+  amount        Decimal  @db.Decimal(10, 2) // 固定金額
+  currency      String   @default("JPY")
+  
+  // 設定
+  isActive      Boolean  @default(true)  // 是否啟用
+  displayOrder  Int      @default(0)     // 顯示順序
+  
+  // 說明
+  description   String?  @db.Text        // 內部備註
+  
+  // 時間戳
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([propertyId, roomId, feeName])
+  @@index([propertyId, roomId, isActive])
+  @@map("room_fees")
+}

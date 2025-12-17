@@ -3,8 +3,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { BookingStatus } from '@/lib/generated/prisma';
 import { stripe } from '@/lib/stripe';
-import { getBeds24Headers } from '@/lib/beds24-client';
-import { calculateRoomPrice } from '@/lib/calculate-price';
+import { calculateTotalPrice } from '@/lib/calculate-price-with-fees';
 
 // 訂單創建請求驗證 Schema
 const createBookingSchema = z.object({
@@ -47,23 +46,26 @@ export async function POST(req: Request) {
 
     const data = validation.data;
 
-    // 2. 再次驗證價格（防止前端篡改）
-    const headers = await getBeds24Headers();
-    const priceResult = await calculateRoomPrice(
-      {
-        roomId: data.roomId,
-        propertyId: data.propertyId,
-        startDate: data.checkIn,
-        endDate: data.checkOut,
-      },
-      headers
-    );
+    // 2. 再次驗證價格（防止前端篡改，包含雜項費用）
+    const priceData = await calculateTotalPrice({
+      roomId: data.roomId,
+      propertyId: data.propertyId,
+      checkIn: data.checkIn,
+      checkOut: data.checkOut,
+      adults: data.numAdults,
+      children: data.numChildren,
+    });
     
-    if (!priceResult.success || priceResult.data?.totalAmount !== data.totalAmount) {
+    // 驗證總金額是否一致
+    if (Math.round(priceData.totalAmount) !== Math.round(data.totalAmount)) {
       return NextResponse.json(
         { 
           success: false, 
           error: '價格驗證失敗，請重新計算價格',
+          details: {
+            expected: Math.round(priceData.totalAmount),
+            received: Math.round(data.totalAmount),
+          },
         },
         { status: 400 }
       );
@@ -85,6 +87,12 @@ export async function POST(req: Request) {
         nights,
         totalAmount: data.totalAmount,
         currency: data.currency,
+        priceBreakdown: {
+          base: priceData.basePrice,
+          breakdown: priceData.breakdown,
+          fees: priceData.fees,
+          feesTotal: priceData.feesTotal,
+        },
         guestName: `${data.guestFirstName} ${data.guestLastName || ''}`.trim(),
         guestEmail: data.guestEmail,
         guestPhone: data.guestPhone,

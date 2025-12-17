@@ -50,8 +50,10 @@ export function BookingDialog({
         body: JSON.stringify({
           roomId: room.roomId,
           propertyId,
-          startDate: checkIn,
-          endDate: checkOut,
+          checkIn,
+          checkOut,
+          adults: 1,       // 預設 1 位成人
+          children: 0,     // 預設 0 位兒童
         }),
       });
 
@@ -108,28 +110,56 @@ export function BookingDialog({
               <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">入住日期</span>
-                  <span className="font-medium">{priceData.checkIn}</span>
+                  <span className="font-medium">{priceData.checkIn || checkIn}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">退房日期</span>
-                  <span className="font-medium">{priceData.checkOut}</span>
+                  <span className="font-medium">{priceData.checkOut || checkOut}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">住宿天數</span>
-                  <span className="font-medium">{priceData.nights} 晚</span>
+                  <span className="font-medium">{priceData.nights || 0} 晚</span>
                 </div>
               </div>
 
-              {/* 每日價格明細 */}
+              {/* 基本房價明細 */}
               <div className="border rounded-lg p-4 space-y-2 max-h-48 overflow-y-auto">
-                <p className="text-sm font-medium mb-2">每日價格</p>
-                {Object.entries(priceData.priceBreakdown).map(([date, price]) => (
+                <p className="text-sm font-medium mb-2">基本房價</p>
+                {Object.entries(priceData.breakdown || priceData.priceBreakdown || {}).map(([date, price]) => (
                   <div key={date} className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{date}</span>
-                    <span className="font-medium">¥{price.toLocaleString()}</span>
+                    <span className="font-medium">¥{(price || 0).toLocaleString()}</span>
                   </div>
                 ))}
+                <Separator className="my-2" />
+                <div className="flex justify-between text-sm font-medium">
+                  <span>小計</span>
+                  <span>¥{((priceData.basePrice || priceData.totalAmount || 0)).toLocaleString()}</span>
+                </div>
               </div>
+
+              {/* 雜項費用明細 */}
+              {priceData.fees && priceData.fees.length > 0 && (
+                <div className="border rounded-lg p-4 space-y-2">
+                  <p className="text-sm font-medium mb-2">額外費用</p>
+                  {priceData.fees.map((fee: any) => (
+                    <div key={fee.id} className="flex justify-between text-sm">
+                      <div>
+                        <span className="text-muted-foreground">{fee.feeName}</span>
+                        {fee.feeNameEn && (
+                          <span className="text-xs text-muted-foreground ml-1">({fee.feeNameEn})</span>
+                        )}
+                      </div>
+                      <span className="font-medium">¥{(fee.amount || 0).toLocaleString()}</span>
+                    </div>
+                  ))}
+                  <Separator className="my-2" />
+                  <div className="flex justify-between text-sm font-medium">
+                    <span>小計</span>
+                    <span>¥{((priceData.feesTotal || 0)).toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
 
               <Separator />
 
@@ -138,11 +168,11 @@ export function BookingDialog({
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">總計</span>
                   <span className="text-2xl font-bold text-primary">
-                    ¥{priceData.totalAmount.toLocaleString()}
+                    ¥{(priceData.totalAmount || 0).toLocaleString()}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  貨幣：{priceData.currency}
+                  貨幣：{priceData.currency || 'JPY'}
                 </p>
               </div>
             </div>
@@ -160,7 +190,7 @@ export function BookingDialog({
                 checkOut={checkOut}
                 totalAmount={priceData.totalAmount}
                 currency={priceData.currency}
-                priceBreakdown={priceData.priceBreakdown}
+                priceBreakdown={priceData.breakdown || priceData.priceBreakdown || {}}
                 onCancel={onClose}
               />
             </div>

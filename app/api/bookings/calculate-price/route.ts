@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getBeds24Headers } from '@/lib/beds24-client';
-import { calculateRoomPrice } from '@/lib/calculate-price';
+import { calculateTotalPrice } from '@/lib/calculate-price-with-fees';
 
 // 輸入驗證 Schema
 const calculatePriceSchema = z.object({
   roomId: z.number().positive('房間 ID 必須是正整數'),
   propertyId: z.number().positive('物業 ID 必須是正整數'),
-  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式必須是 YYYY-MM-DD'),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式必須是 YYYY-MM-DD'),
+  checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式必須是 YYYY-MM-DD'),
+  checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式必須是 YYYY-MM-DD'),
+  adults: z.number().int().min(1).max(10),
+  children: z.number().int().min(0).max(10).default(0),
 });
 
 export const dynamic = 'force-dynamic';
@@ -30,11 +31,11 @@ export async function POST(request: Request) {
       );
     }
     
-    const { roomId, propertyId, startDate, endDate } = validation.data;
+    const { roomId, propertyId, checkIn, checkOut, adults, children } = validation.data;
     
     // 2. 額外驗證日期邏輯（業務規則）
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
@@ -60,30 +61,20 @@ export async function POST(request: Request) {
       );
     }
     
-    // 3. 從 session cookie 獲取認證 headers
-    const headers = await getBeds24Headers();
+    // 3. 調用價格計算函數（包含雜項費用）
+    const result = await calculateTotalPrice({
+      propertyId,
+      roomId,
+      checkIn,
+      checkOut,
+      adults,
+      children,
+    });
     
-    // 4. 調用共享的價格計算函數
-    const result = await calculateRoomPrice(
-      { roomId, propertyId, startDate, endDate },
-      headers
-    );
-    
-    if (!result.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error,
-          unavailableDates: result.unavailableDates,
-        },
-        { status: result.unavailableDates ? 409 : 400 }
-      );
-    }
-    
-    // 5. 返回成功結果
+    // 4. 返回成功結果
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: result,
     });
   } catch (error) {
     console.error('❌ 價格計算 API 錯誤:', error);
