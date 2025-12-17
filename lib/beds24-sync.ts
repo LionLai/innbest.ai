@@ -244,6 +244,7 @@ async function createBeds24BookingWithRetry(booking: any, retryCount = 0): Promi
       lastName,
       email: booking.guestEmail,
       mobile: booking.guestPhone,
+      address: booking.guestAddress || undefined, // 地址
       numAdult: booking.adults,
       numChild: booking.children,
       notes: booking.specialRequests || undefined,

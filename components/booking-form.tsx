@@ -15,6 +15,7 @@ const bookingFormSchema = z.object({
   guestName: z.string().min(2, "姓名至少需要 2 個字元").max(50, "姓名不能超過 50 個字元"),
   guestEmail: z.string().email("請輸入有效的 Email 地址"),
   guestPhone: z.string().min(10, "電話號碼至少需要 10 個字元").max(20, "電話號碼不能超過 20 個字元"),
+  guestAddress: z.string().min(5, "地址至少需要 5 個字元").max(200, "地址不能超過 200 個字元").optional(),
   adults: z.number().min(1, "至少需要 1 位成人").max(10, "成人數量不能超過 10 位"),
   children: z.number().min(0, "兒童數量不能為負數").max(10, "兒童數量不能超過 10 位"),
   specialRequests: z.string().max(500, "特殊需求不能超過 500 個字元").optional(),
@@ -58,6 +59,7 @@ export function BookingForm({
       guestName: "",
       guestEmail: "",
       guestPhone: "",
+      guestAddress: "",
       adults: 2,
       children: 0,
       specialRequests: "",
@@ -90,6 +92,7 @@ export function BookingForm({
           guestLastName: guestLastName || undefined,
           guestEmail: data.guestEmail,
           guestPhone: data.guestPhone,
+          guestAddress: data.guestAddress || undefined,
           numAdults: data.adults,
           numChildren: data.children,
           specialRequests: data.specialRequests || undefined,
@@ -168,6 +171,23 @@ export function BookingForm({
         />
         {errors.guestPhone && (
           <p className="text-sm text-destructive">{errors.guestPhone.message}</p>
+        )}
+      </div>
+
+      {/* 地址 */}
+      <div className="space-y-2">
+        <Label htmlFor="guestAddress">
+          地址（選填）
+        </Label>
+        <Textarea
+          id="guestAddress"
+          {...register("guestAddress")}
+          placeholder="請輸入聯絡地址"
+          disabled={isSubmitting}
+          rows={2}
+        />
+        {errors.guestAddress && (
+          <p className="text-sm text-destructive">{errors.guestAddress.message}</p>
         )}
       </div>
 

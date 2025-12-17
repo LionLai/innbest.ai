@@ -121,6 +121,7 @@ export async function GET(request: Request) {
           guestName: localBooking.guestName,
           guestEmail: localBooking.guestEmail,
           guestPhone: localBooking.guestPhone,
+          guestAddress: localBooking.guestAddress,
           adults: localBooking.adults,
           children: localBooking.children,
           specialRequests: localBooking.specialRequests,

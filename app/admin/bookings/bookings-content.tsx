@@ -51,6 +51,7 @@ interface Booking {
   email: string;
   phone?: string;
   mobile?: string;
+  address?: string;
   numAdult: number;
   numChild: number;
   status: string;
@@ -74,6 +75,7 @@ interface Booking {
     guestName?: string;
     guestEmail?: string;
     guestPhone?: string;
+    guestAddress?: string;
     adults?: number;
     children?: number;
     specialRequests?: string;
@@ -726,18 +728,7 @@ export function BookingsContent() {
                         <TableRow>
                           <TableHead>來源</TableHead>
                           <TableHead>訂單ID</TableHead>
-                          <TableHead>房產 / 房間</TableHead>
-                          <TableHead>入住日期</TableHead>
-                          <TableHead>退房日期</TableHead>
-                          <TableHead>客人</TableHead>
-                          <TableHead>
-                            <Users className="inline h-4 w-4 mr-1" />
-                            人數
-                          </TableHead>
-                          <TableHead>
-                            <DollarSign className="inline h-4 w-4 mr-1" />
-                            價格
-                          </TableHead>
+                          <TableHead className="min-w-[400px]">訂單詳情</TableHead>
                           <TableHead>狀態</TableHead>
                           <TableHead>建立時間</TableHead>
                         </TableRow>
@@ -763,41 +754,79 @@ export function BookingsContent() {
                                 )}
                               </div>
                             </TableCell>
+                            {/* 整合訂單詳情欄位 */}
                             <TableCell>
-                              <div className="text-sm">
-                                <div className="font-medium">
-                                  {getPropertyName(booking.propertyId)}
-                                </div>
-                                <div className="text-muted-foreground">
-                                  {getRoomName(booking.propertyId, booking.roomId)}
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>{booking.arrival}</TableCell>
-                            <TableCell>{booking.departure}</TableCell>
-                            <TableCell>
-                              <div className="text-sm">
-                                <div className="font-medium">
-                                  {booking.firstName} {booking.lastName}
-                                </div>
-                                <div className="text-muted-foreground text-xs">
-                                  {booking.email}
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {booking.numAdult} 大 / {booking.numChild} 小
-                            </TableCell>
-                            <TableCell>
-                              <div>
-                                <div className="font-semibold">
-                                  ¥{booking.price?.toLocaleString() || '0'}
-                                </div>
-                                {booking._local.payment?.stripePaymentIntentId && (
-                                  <div className="text-xs text-muted-foreground">
-                                    Stripe: {booking._local.payment.stripePaymentIntentId.substring(0, 12)}...
+                              <div className="space-y-2 py-1">
+                                {/* 房產 / 房間 */}
+                                <div className="flex items-start gap-2">
+                                  <Home className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+                                  <div className="text-sm">
+                                    <div className="font-medium">
+                                      {getPropertyName(booking.propertyId)}
+                                    </div>
+                                    <div className="text-muted-foreground">
+                                      {getRoomName(booking.propertyId, booking.roomId)}
+                                    </div>
                                   </div>
-                                )}
+                                </div>
+
+                                {/* 入住 / 退房日期 */}
+                                <div className="flex items-center gap-2">
+                                  <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                                  <div className="text-sm">
+                                    <span className="font-medium">{booking.arrival}</span>
+                                    <span className="text-muted-foreground mx-1">→</span>
+                                    <span className="font-medium">{booking.departure}</span>
+                                    <span className="text-muted-foreground ml-2">
+                                      ({Math.ceil((new Date(booking.departure).getTime() - new Date(booking.arrival).getTime()) / (1000 * 60 * 60 * 24))}晚)
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* 客人資訊 & 人數 & 價格 - 合併在一行 */}
+                                <div className="flex items-center gap-4 text-sm">
+                                  {/* 客人 */}
+                                  <div className="flex items-center gap-1.5 flex-1">
+                                    <span className="text-muted-foreground">👤</span>
+                                    <div>
+                                      <span className="font-medium">
+                                        {booking.firstName} {booking.lastName}
+                                      </span>
+                                      <div className="text-xs text-muted-foreground">
+                                        {booking.email}
+                                      </div>
+                                      {/* 顯示地址（如果有） */}
+                                      {(booking.address || booking._local.guestAddress) && (
+                                        <div className="text-xs text-muted-foreground mt-0.5">
+                                          📍 {booking.address || booking._local.guestAddress}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* 人數 */}
+                                  <div className="flex items-center gap-1.5">
+                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                    <span className="whitespace-nowrap">
+                                      {booking.numAdult}大 / {booking.numChild}小
+                                    </span>
+                                  </div>
+
+                                  {/* 價格 */}
+                                  <div className="flex items-center gap-1.5">
+                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <div className="font-semibold whitespace-nowrap">
+                                        ¥{booking.price?.toLocaleString() || '0'}
+                                      </div>
+                                      {booking._local.payment?.stripePaymentIntentId && (
+                                        <div className="text-xs text-muted-foreground">
+                                          Stripe: {booking._local.payment.stripePaymentIntentId.substring(0, 12)}...
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
                             </TableCell>
                             <TableCell>

@@ -32,6 +32,7 @@ model Booking {
   guestName         String
   guestEmail        String
   guestPhone        String
+  guestAddress      String?  @db.Text // 客人地址
   adults            Int
   children          Int      @default(0)
   specialRequests   String?  @db.Text
