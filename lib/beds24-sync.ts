@@ -4,82 +4,221 @@ import { stripe } from './stripe';
 import { sendEmail, getBookingConfirmationEmailHtml, sendAdminAlert } from './email';
 import { BookingStatus, PaymentStatus, SyncAction, SyncStatus } from './generated/prisma';
 
-const MAX_RETRIES = 5;
+// ⚠️ 自動重試已停用
+const MAX_RETRIES = 0; // 原本是 5，現已停用自動重試
 const RETRY_DELAYS = [1000, 2000, 5000, 10000, 30000]; // 重試延遲（毫秒）
 
 /**
  * 同步訂單到 Beds24
  * 實現自動重試和退款機制
+ * ⚠️ 使用原子操作防止重複創建訂單
  */
 export async function syncBookingToBeds24(bookingId: string): Promise<void> {
   console.log(`🔄 [Beds24 Sync] 開始處理訂單: ${bookingId}`);
 
   try {
-    // 1. 獲取訂單資料
+    // 0. 🔒 檢查是否有正在進行的同步（防止短時間內重複調用）
+    const recentSyncLog = await prisma.syncLog.findFirst({
+      where: {
+        bookingId,
+        action: SyncAction.CREATE,
+        status: {
+          in: [SyncStatus.PENDING, SyncStatus.RETRYING],
+        },
+        createdAt: {
+          gte: new Date(Date.now() - 5 * 60 * 1000), // 5分鐘內
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    if (recentSyncLog) {
+      const timeSinceLastSync = Date.now() - recentSyncLog.createdAt.getTime();
+      console.log(`⚠️  [Beds24 Sync] 檢測到正在進行的同步 (${Math.round(timeSinceLastSync / 1000)}秒前)，跳過重複處理`);
+      
+      // 如果超過3分鐘仍在進行中，可能是卡住了，發出警告但不阻止
+      if (timeSinceLastSync > 3 * 60 * 1000) {
+        console.warn(`⚠️  [Beds24 Sync] 上次同步可能卡住了，允許重新嘗試`);
+      } else {
+        return;
+      }
+    }
+
+    // 1. 先檢查訂單基本資訊（快速檢查）
+    const preCheck = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      select: {
+        id: true,
+        status: true,
+        beds24BookingId: true,
+      },
+    });
+
+    if (!preCheck) {
+      throw new Error(`訂單不存在: ${bookingId}`);
+    }
+
+    // 2. 快速冪等性檢查（避免不必要的資料庫操作）
+    if (preCheck.beds24BookingId) {
+      console.log(`✅ [Beds24 Sync] 訂單已同步過，Beds24 ID: ${preCheck.beds24BookingId}，跳過處理`);
+      return;
+    }
+
+    // 3. 快速狀態檢查
+    if (preCheck.status === BookingStatus.CONFIRMED) {
+      console.log(`✅ [Beds24 Sync] 訂單已確認，跳過處理`);
+      return;
+    }
+
+    if (preCheck.status === BookingStatus.REFUNDED || 
+        preCheck.status === BookingStatus.BEDS24_FAILED) {
+      console.log(`⚠️  [Beds24 Sync] 訂單已退款或失敗，跳過處理`);
+      return;
+    }
+
+    if (preCheck.status !== BookingStatus.PAYMENT_COMPLETED && 
+        preCheck.status !== BookingStatus.BEDS24_CREATING) {
+      throw new Error(`訂單狀態不正確: ${preCheck.status}`);
+    }
+
+    // 4. 🔒 使用原子操作更新狀態（防止 Race Condition）
+    // 只有當狀態是 PAYMENT_COMPLETED 時才能更新為 BEDS24_CREATING
+    // 這確保了只有第一個請求能成功更新
+    const updateResult = await prisma.booking.updateMany({
+      where: { 
+        id: bookingId,
+        status: BookingStatus.PAYMENT_COMPLETED, // 必須是這個狀態
+        beds24BookingId: null, // 必須還沒同步過
+      },
+      data: { 
+        status: BookingStatus.BEDS24_CREATING,
+        updatedAt: new Date(),
+      },
+    });
+
+    // 如果更新失敗（count = 0），表示其他請求已經在處理
+    if (updateResult.count === 0) {
+      console.log(`⚠️  [Beds24 Sync] 訂單已被其他請求鎖定，重新檢查狀態...`);
+      
+      // 重新讀取訂單狀態
+      const recheckBooking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        select: {
+          status: true,
+          beds24BookingId: true,
+        },
+      });
+
+      if (recheckBooking?.beds24BookingId) {
+        console.log(`✅ [Beds24 Sync] 訂單已由其他請求同步完成，Beds24 ID: ${recheckBooking.beds24BookingId}`);
+        return;
+      }
+
+      if (recheckBooking?.status === BookingStatus.BEDS24_CREATING) {
+        console.log(`⚠️  [Beds24 Sync] 訂單正在被其他請求處理中，跳過重複處理`);
+        return;
+      }
+
+      throw new Error(`無法鎖定訂單進行同步，當前狀態: ${recheckBooking?.status}`);
+    }
+
+    console.log(`🔒 [Beds24 Sync] 成功鎖定訂單，開始同步處理`);
+
+    // 5. 獲取完整訂單資料（已確保只有一個請求會執行到這裡）
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: { payment: true },
     });
 
     if (!booking) {
-      throw new Error(`訂單不存在: ${bookingId}`);
+      throw new Error(`無法讀取訂單資料: ${bookingId}`);
     }
 
-    // 2. 檢查是否已經同步過（冪等性保護）
-    if (booking.beds24BookingId) {
-      console.log(`✅ [Beds24 Sync] 訂單已同步過，Beds24 ID: ${booking.beds24BookingId}，跳過處理`);
-      return;
-    }
-
-    // 3. 檢查訂單狀態
-    if (booking.status === BookingStatus.CONFIRMED) {
-      console.log(`✅ [Beds24 Sync] 訂單已確認，跳過處理`);
-      return;
-    }
-
-    if (booking.status === BookingStatus.REFUNDED || 
-        booking.status === BookingStatus.BEDS24_FAILED) {
-      console.log(`⚠️  [Beds24 Sync] 訂單已退款或失敗，跳過處理`);
-      return;
-    }
-
-    if (booking.status !== BookingStatus.PAYMENT_COMPLETED && 
-        booking.status !== BookingStatus.BEDS24_CREATING) {
-      throw new Error(`訂單狀態不正確: ${booking.status}`);
-    }
-
-    // 4. 更新狀態為「正在創建 Beds24 訂單」（如果還不是的話）
-    if (booking.status !== BookingStatus.BEDS24_CREATING) {
-      await prisma.booking.update({
-        where: { id: bookingId },
-        data: { status: BookingStatus.BEDS24_CREATING },
-      });
-      console.log(`📝 [Beds24 Sync] 訂單狀態已更新為 BEDS24_CREATING`);
-    } else {
-      console.log(`⚠️  [Beds24 Sync] 訂單已在創建中，繼續處理`);
-    }
-
-    // 5. 嘗試創建 Beds24 訂單（帶重試）
+    // 6. 嘗試創建 Beds24 訂單（帶重試）
     const beds24BookingId = await createBeds24BookingWithRetry(booking);
 
-    // 6. 更新訂單狀態為「Beds24 已確認」
-    await prisma.booking.update({
-      where: { id: bookingId },
+    // 7. 🔒 使用原子操作更新為 CONFIRMED（再次確保冪等性）
+    const confirmResult = await prisma.booking.updateMany({
+      where: { 
+        id: bookingId,
+        status: BookingStatus.BEDS24_CREATING, // 必須是創建中狀態
+        beds24BookingId: null, // 必須還沒設置 Beds24 ID
+      },
       data: { 
         status: BookingStatus.CONFIRMED,
         beds24BookingId,
+        updatedAt: new Date(),
       },
     });
 
-    // 7. 發送確認郵件給客戶
+    if (confirmResult.count === 0) {
+      console.warn(`⚠️  [Beds24 Sync] 無法更新訂單為 CONFIRMED，可能已被其他請求處理`);
+      
+      // 檢查是否已經有 beds24BookingId
+      const finalCheck = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        select: { beds24BookingId: true, status: true },
+      });
+
+      if (finalCheck?.beds24BookingId && finalCheck.beds24BookingId !== beds24BookingId) {
+        console.error(`🚨 [Beds24 Sync] 發現重複訂單！本次創建 ID: ${beds24BookingId}, 資料庫中 ID: ${finalCheck.beds24BookingId}`);
+        // 發送警報給管理員
+        await sendAdminAlert({
+          subject: `🚨 檢測到重複的 Beds24 訂單`,
+          message: `訂單 ${bookingId} 可能被重複創建到 Beds24`,
+          details: {
+            bookingId,
+            existingBeds24Id: finalCheck.beds24BookingId,
+            newBeds24Id: beds24BookingId,
+            status: finalCheck.status,
+          },
+          level: 'HIGH',
+        });
+        throw new Error(`檢測到重複訂單創建，請手動檢查 Beds24`);
+      }
+    }
+
+    // 8. 發送確認郵件給客戶
     await sendBookingConfirmationEmail(booking);
 
     console.log(`✅ [Beds24 Sync] 訂單同步成功: ${bookingId} -> Beds24 ID: ${beds24BookingId}`);
   } catch (error) {
     console.error(`❌ [Beds24 Sync] 訂單同步失敗: ${bookingId}`, error);
     
-    // 處理失敗：自動退款
-    await handleSyncFailure(bookingId, error);
+    // ⚠️ 自動退款已停用 - 請手動處理失敗訂單
+    // await handleSyncFailure(bookingId, error);
+    
+    // 只更新訂單狀態為失敗，不執行退款
+    try {
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: { 
+          status: BookingStatus.BEDS24_FAILED,
+          failureReason: error instanceof Error ? error.message : String(error),
+          updatedAt: new Date(),
+        },
+      });
+      
+      // 發送警報給管理員（不自動退款）
+      await sendAdminAlert({
+        subject: `⚠️ Beds24 同步失敗 - 需要手動處理`,
+        message: `訂單 ${bookingId} 的 Beds24 同步失敗，請手動檢查並決定是否退款。`,
+        details: {
+          bookingId,
+          error: String(error),
+        },
+        level: 'HIGH',
+      });
+      
+      console.log(`📝 [Beds24 Sync] 訂單已標記為 BEDS24_FAILED，等待管理員手動處理`);
+    } catch (updateError) {
+      console.error(`❌ [Beds24 Sync] 更新訂單狀態失敗:`, updateError);
+    }
+    
+    // 重新拋出錯誤，讓上層知道同步失敗
+    throw error;
   }
 }
 
@@ -100,7 +239,7 @@ async function createBeds24BookingWithRetry(booking: any, retryCount = 0): Promi
       roomId: booking.roomId,
       arrival: booking.checkIn.toISOString().split('T')[0],
       departure: booking.checkOut.toISOString().split('T')[0],
-      status: 'confirmed' as const,
+      status: 'new' as const,
       firstName,
       lastName,
       email: booking.guestEmail,
@@ -108,6 +247,8 @@ async function createBeds24BookingWithRetry(booking: any, retryCount = 0): Promi
       numAdult: booking.adults,
       numChild: booking.children,
       notes: booking.specialRequests || undefined,
+      // 標記訂單來源
+      channel: 'innbest.ai',
       // 記錄本地訂單 ID 和 Stripe Payment ID
       custom1: booking.id,
       custom2: booking.payment?.stripePaymentIntentId,

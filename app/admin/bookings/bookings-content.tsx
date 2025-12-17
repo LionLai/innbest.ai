@@ -98,6 +98,28 @@ interface Booking {
   };
 }
 
+interface UnsyncedBooking {
+  id: string;
+  roomName: string;
+  guestName: string;
+  checkIn: Date;
+  checkOut: Date;
+  status: string;
+  totalAmount: any;
+  createdAt: Date;
+  paymentId?: string;
+  failureReason?: string;
+  beds24BookingId?: number | null;
+  syncIssue: 'no_beds24_id' | 'beds24_not_found';
+  syncIssueMessage: string;
+}
+
+interface UnsyncedStats {
+  total: number;
+  noIdCount: number;
+  notFoundCount: number;
+}
+
 interface PaginationInfo {
   page: number;
   pageSize: number;
@@ -126,6 +148,15 @@ export function BookingsContent() {
     website: 0,
     external: 0,
   });
+  
+  const [unsyncedBookings, setUnsyncedBookings] = useState<UnsyncedBooking[]>([]);
+  const [unsyncedStats, setUnsyncedStats] = useState<UnsyncedStats>({
+    total: 0,
+    noIdCount: 0,
+    notFoundCount: 0,
+  });
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -178,6 +209,12 @@ export function BookingsContent() {
         if (result.data.stats) {
           setStats(result.data.stats);
         }
+        if (result.data.unsyncedBookings) {
+          setUnsyncedBookings(result.data.unsyncedBookings);
+        }
+        if (result.data.unsyncedStats) {
+          setUnsyncedStats(result.data.unsyncedStats);
+        }
       } else {
         setError(result.error || '載入失敗');
       }
@@ -211,6 +248,76 @@ export function BookingsContent() {
     });
     // 清除後重新載入
     setTimeout(() => fetchBookings(1), 100);
+  };
+
+  // 手動同步單個訂單
+  const handleSyncSingle = async (bookingId: string) => {
+    setIsSyncing(true);
+    setSyncMessage(null);
+    
+    try {
+      const response = await fetch('/api/admin/bookings/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bookingId }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setSyncMessage(`✅ 訂單 ${bookingId.substring(0, 8)}... 同步成功！`);
+        // 重新載入訂房列表
+        setTimeout(() => {
+          fetchBookings(pagination.page);
+          setSyncMessage(null);
+        }, 2000);
+      } else {
+        setSyncMessage(`❌ 同步失敗: ${result.error}`);
+      }
+    } catch (err) {
+      setSyncMessage('❌ 網路錯誤，請稍後再試');
+      console.error(err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // 批量同步所有未同步訂單
+  const handleSyncAll = async () => {
+    if (!confirm(`確定要同步所有 ${unsyncedBookings.length} 筆未同步訂單嗎？`)) {
+      return;
+    }
+
+    setIsSyncing(true);
+    setSyncMessage('🔄 正在批量同步訂單，請稍候...');
+    
+    try {
+      const response = await fetch('/api/admin/bookings/sync', {
+        method: 'PUT',
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setSyncMessage(
+          `✅ 批量同步完成！成功: ${result.summary.success} 筆，失敗: ${result.summary.failed} 筆`
+        );
+        // 重新載入訂房列表
+        setTimeout(() => {
+          fetchBookings(pagination.page);
+          setSyncMessage(null);
+        }, 3000);
+      } else {
+        setSyncMessage(`❌ 批量同步失敗: ${result.error}`);
+      }
+    } catch (err) {
+      setSyncMessage('❌ 網路錯誤，請稍後再試');
+      console.error(err);
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   // 狀態徽章顏色
@@ -346,6 +453,117 @@ export function BookingsContent() {
               </div>
             )}
           </div>
+
+          {/* 未同步訂單警告 */}
+          {unsyncedBookings.length > 0 && (
+            <Card className="mb-6 border-destructive">
+              <CardHeader className="bg-destructive/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-destructive">
+                      <RefreshCw className="h-5 w-5" />
+                      未同步訂單警告
+                    </CardTitle>
+                    <CardDescription className="mt-2">
+                      發現 <strong>{unsyncedStats.total}</strong> 筆訂單（付款已完成）尚未正確同步到 Beds24：
+                      <div className="mt-2 space-y-1">
+                        {unsyncedStats.noIdCount > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Badge variant="destructive" className="text-xs">完全未同步</Badge>
+                            <span>{unsyncedStats.noIdCount} 筆（無 Beds24 ID）</span>
+                          </div>
+                        )}
+                        {unsyncedStats.notFoundCount > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs border-destructive text-destructive">ID 不一致</Badge>
+                            <span>{unsyncedStats.notFoundCount} 筆（Beds24 中找不到）</span>
+                          </div>
+                        )}
+                      </div>
+                    </CardDescription>
+                  </div>
+                  <Button
+                    onClick={handleSyncAll}
+                    disabled={isSyncing}
+                    variant="destructive"
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+                    批量同步全部
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                {syncMessage && (
+                  <div className={`p-3 mb-4 rounded-lg ${
+                    syncMessage.startsWith('✅') 
+                      ? 'bg-green-50 text-green-700 border border-green-200' 
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
+                    {syncMessage}
+                  </div>
+                )}
+                
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-sm">未同步訂單列表：</h4>
+                  <div className="max-h-60 overflow-y-auto space-y-2">
+                    {unsyncedBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                      >
+                        <div className="flex-1 space-y-2">
+                          <div className="grid grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <div className="font-medium">{booking.roomName}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {booking.id.substring(0, 12)}...
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">客人</div>
+                              <div className="font-medium">{booking.guestName}</div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">入住日期</div>
+                              <div className="font-medium">
+                                {new Date(booking.checkIn).toLocaleDateString('zh-TW')}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">金額</div>
+                              <div className="font-medium">¥{Number(booking.totalAmount).toLocaleString()}</div>
+                            </div>
+                          </div>
+                          {/* 同步問題說明 */}
+                          <div className="flex items-center gap-2 text-xs">
+                            {booking.syncIssue === 'no_beds24_id' ? (
+                              <Badge variant="destructive" className="text-xs">
+                                ⚠️ 完全未同步
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-xs border-destructive text-destructive">
+                                ⚠️ ID 不一致
+                              </Badge>
+                            )}
+                            <span className="text-muted-foreground">{booking.syncIssueMessage}</span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleSyncSingle(booking.id)}
+                          disabled={isSyncing}
+                        >
+                          <RefreshCw className={`h-3 w-3 mr-1 ${isSyncing ? 'animate-spin' : ''}`} />
+                          同步
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* 篩選區域 */}
           <Card className="mb-6">

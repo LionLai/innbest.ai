@@ -158,6 +158,61 @@ export async function GET(request: Request) {
 
     console.log(`✅ 返回 ${filteredBookings.length} 筆訂房（${enrichedBookings.filter((b: any) => b._local.source === 'website').length} 筆網站訂房，${enrichedBookings.filter((b: any) => b._local.source === 'external').length} 筆外部訂房）`);
 
+    // ========================================
+    // 兩階段檢測未同步的訂單
+    // ========================================
+    
+    // 第一步：獲取所有本地的 PAYMENT_COMPLETED 訂單
+    const localPaymentCompletedBookings = await prisma.booking.findMany({
+      where: {
+        status: 'PAYMENT_COMPLETED',
+      },
+      include: {
+        payment: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    console.log(`🔍 檢查 ${localPaymentCompletedBookings.length} 筆 PAYMENT_COMPLETED 訂單的同步狀態...`);
+
+    // 第二步：建立 Beds24 訂單 ID 的 Set（用於快速查找）
+    const beds24BookingIds = new Set(beds24Bookings.map((b: any) => b.id));
+    
+    // 第三步：檢測未同步的訂單（兩種情況）
+    const unsyncedBookings = localPaymentCompletedBookings
+      .map(booking => {
+        // 情況 1：完全未同步（沒有 beds24BookingId）
+        if (!booking.beds24BookingId) {
+          return {
+            ...booking,
+            syncIssue: 'no_beds24_id' as const,
+            syncIssueMessage: '完全未同步（無 Beds24 ID）',
+          };
+        }
+        
+        // 情況 2：有 beds24BookingId 但在 Beds24 API 中找不到
+        if (!beds24BookingIds.has(booking.beds24BookingId)) {
+          return {
+            ...booking,
+            syncIssue: 'beds24_not_found' as const,
+            syncIssueMessage: `Beds24 中找不到此訂單（ID: ${booking.beds24BookingId}）`,
+          };
+        }
+        
+        // 正常同步
+        return null;
+      })
+      .filter(Boolean); // 移除 null 值
+
+    const noIdCount = unsyncedBookings.filter((b: any) => b.syncIssue === 'no_beds24_id').length;
+    const notFoundCount = unsyncedBookings.filter((b: any) => b.syncIssue === 'beds24_not_found').length;
+
+    console.log(`⚠️  發現 ${unsyncedBookings.length} 筆未同步訂單：`);
+    console.log(`   - ${noIdCount} 筆完全未同步（無 Beds24 ID）`);
+    console.log(`   - ${notFoundCount} 筆 ID 不一致（Beds24 中找不到）`);
+
     return NextResponse.json({
       success: true,
       data: {
@@ -172,8 +227,29 @@ export async function GET(request: Request) {
         },
         stats: {
           total: enrichedBookings.length,
-          website: enrichedBookings.filter((b: any) => b.source === 'website').length,
-          external: enrichedBookings.filter((b: any) => b.source === 'external').length,
+          website: enrichedBookings.filter((b: any) => b._local.source === 'website').length,
+          external: enrichedBookings.filter((b: any) => b._local.source === 'external').length,
+        },
+        // 未同步訂單資訊
+        unsyncedBookings: unsyncedBookings.map((b: any) => ({
+          id: b.id,
+          roomName: b.roomName,
+          guestName: b.guestName,
+          checkIn: b.checkIn,
+          checkOut: b.checkOut,
+          status: b.status,
+          totalAmount: b.totalAmount,
+          createdAt: b.createdAt,
+          paymentId: b.paymentId,
+          failureReason: b.failureReason,
+          beds24BookingId: b.beds24BookingId,
+          syncIssue: b.syncIssue,
+          syncIssueMessage: b.syncIssueMessage,
+        })),
+        unsyncedStats: {
+          total: unsyncedBookings.length,
+          noIdCount,
+          notFoundCount,
         },
       },
     });

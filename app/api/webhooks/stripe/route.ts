@@ -77,6 +77,7 @@ export async function POST(req: Request) {
 
 /**
  * 處理 Checkout Session 完成事件
+ * ⚠️ 加入冪等性保護，防止重複處理
  */
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const bookingId = session.metadata?.bookingId;
@@ -87,8 +88,15 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
 
   console.log('🎉 處理訂單付款成功:', bookingId);
+  console.log('📝 Stripe Session ID:', session.id);
+  console.log('📝 Payment Intent ID:', session.payment_intent);
 
-  // 1. 檢查 Payment 是否已存在（冪等性保護）
+  // 1. 🔒 檢查 Payment 是否已存在（冪等性保護）
+  if (!session.payment_intent) {
+    console.error('❌ Checkout Session 缺少 payment_intent');
+    return;
+  }
+
   const existingPayment = await prisma.payment.findUnique({
     where: { stripePaymentIntentId: session.payment_intent as string },
   });
@@ -97,6 +105,24 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   if (existingPayment) {
     console.log('⚠️  Payment 已存在，跳過創建:', existingPayment.id);
     payment = existingPayment;
+    
+    // 檢查該 Payment 是否已關聯到訂單
+    const linkedBooking = await prisma.booking.findFirst({
+      where: { paymentId: existingPayment.id },
+    });
+    
+    if (linkedBooking && linkedBooking.id === bookingId) {
+      console.log('⚠️  此 Webhook 事件已處理過，Payment 已關聯到訂單');
+      
+      // 檢查訂單狀態，如果已經完成就直接返回
+      if (linkedBooking.status === BookingStatus.CONFIRMED) {
+        console.log('✅ 訂單已確認，跳過重複處理');
+        return;
+      } else if (linkedBooking.status === BookingStatus.BEDS24_CREATING) {
+        console.log('⚠️  訂單正在同步中，跳過重複處理');
+        return;
+      }
+    }
   } else {
     // 創建 Payment 記錄
     payment = await prisma.payment.create({
@@ -135,20 +161,53 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     return;
   }
 
-  // 3. 更新訂單狀態並關聯 Payment（只在 PENDING 或 PAYMENT_PROCESSING 時更新）
+  // 3. 🔒 使用原子操作更新訂單狀態並關聯 Payment
   if (currentBooking.status === BookingStatus.PENDING || 
       currentBooking.status === BookingStatus.PAYMENT_PROCESSING) {
-    await prisma.booking.update({
-      where: { id: bookingId },
+    
+    const updateResult = await prisma.booking.updateMany({
+      where: { 
+        id: bookingId,
+        status: {
+          in: [BookingStatus.PENDING, BookingStatus.PAYMENT_PROCESSING],
+        },
+      },
       data: { 
         status: BookingStatus.PAYMENT_COMPLETED,
         paymentId: payment.id,
         updatedAt: new Date(),
       },
     });
-    console.log('✅ 訂單狀態已更新為 PAYMENT_COMPLETED');
+
+    if (updateResult.count > 0) {
+      console.log('✅ 訂單狀態已更新為 PAYMENT_COMPLETED');
+    } else {
+      console.log('⚠️  訂單狀態已被其他請求更新，重新檢查...');
+      
+      // 重新檢查訂單狀態
+      const recheckBooking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        select: { status: true, paymentId: true },
+      });
+
+      if (recheckBooking?.status !== BookingStatus.PAYMENT_COMPLETED) {
+        console.warn(`⚠️  訂單狀態異常: ${recheckBooking?.status}，停止處理`);
+        return;
+      }
+      
+      console.log('⚠️  訂單已由其他請求更新為 PAYMENT_COMPLETED，繼續處理同步');
+    }
   } else if (currentBooking.status === BookingStatus.PAYMENT_COMPLETED) {
     console.log('⚠️  訂單已是 PAYMENT_COMPLETED 狀態，繼續處理同步');
+    
+    // 確保 Payment 已關聯
+    if (!currentBooking.paymentId) {
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: { paymentId: payment.id },
+      });
+      console.log('✅ 已關聯 Payment 到訂單');
+    }
   }
 
   // 3. 同步訂單到 Beds24（等待完成以確保在 Vercel 函數終止前完成）
