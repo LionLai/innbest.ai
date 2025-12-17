@@ -135,17 +135,26 @@ export async function GET(request: Request) {
       params: {
         query: {
           id: propertyIds,
-          includeRooms: true,
+          includeAllRooms: true,  // 使用 includeAllRooms 而不是 includeRooms
         },
       },
     });
 
     const properties = propertiesResult.data?.data || [];
     const totalProperties = properties.length;
-    const activeRooms = properties.reduce(
-      (sum: number, p: any) => sum + (p.roomTypes?.length || 0),
-      0
-    );
+    
+    // 計算總房間數量（累加每個房型的數量）
+    const activeRooms = properties.reduce((sum: number, p: any) => {
+      if (!p.roomTypes || !Array.isArray(p.roomTypes)) return sum;
+      
+      // 累加每個房型的房間數量
+      const propertyRooms = p.roomTypes.reduce(
+        (roomSum: number, roomType: any) => roomSum + (roomType.qty || 0),
+        0
+      );
+      
+      return sum + propertyRooms;
+    }, 0);
 
     // 6. 計算入住率（簡化版：已訂天數 / 總可用天數）
     const daysInPeriod = Math.ceil(
