@@ -187,7 +187,7 @@ export function OwnerDashboardContent() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-xl sm:text-2xl font-bold">
-                    ¥{Math.round(stats.totalRevenue / 1000)}K
+                    ¥{stats.totalRevenue.toLocaleString('zh-TW')}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
                     較上月 {stats.growth.revenue}
