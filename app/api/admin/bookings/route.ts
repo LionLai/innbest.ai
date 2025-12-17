@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
 import { prisma } from '@/lib/prisma';
+import { verifyAuth, handleAuthError } from '@/lib/api-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,8 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: Request) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     const { searchParams } = new URL(request.url);
     
     // 分頁參數
@@ -254,16 +257,8 @@ export async function GET(request: Request) {
         },
       },
     });
-  } catch (err) {
-    console.error('❌ 伺服器錯誤:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '伺服器內部錯誤',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 

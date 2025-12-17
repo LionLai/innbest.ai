@@ -191,3 +191,82 @@ model RoomFee {
   @@index([propertyId, roomId, isActive])
   @@map("room_fees")
 }
+
+// =====================================================
+// 業主資料表
+// =====================================================
+model Owner {
+  id              String   @id @default(cuid())
+  
+  // 基本資訊
+  email           String   @unique
+  name            String
+  nameEn          String?
+  phone           String?
+  
+  // 認證（使用 Supabase Auth）
+  supabaseUserId  String   @unique
+  
+  // 狀態
+  isActive        Boolean  @default(true)
+  lastLoginAt     DateTime?
+  
+  // 物業關聯
+  properties      OwnerProperty[]
+  
+  // 通知設定
+  notifications   OwnerNotificationSettings?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([email])
+  @@index([isActive])
+  @@map("owners")
+}
+
+// =====================================================
+// 業主-物業關聯表
+// =====================================================
+model OwnerProperty {
+  id          String   @id @default(cuid())
+  
+  ownerId     String
+  owner       Owner    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  propertyId  Int      // Beds24 Property ID
+  
+  // 權限設定（未來可擴展）
+  canViewBookings    Boolean @default(true)
+  canViewRevenue     Boolean @default(true)
+  canViewStats       Boolean @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([ownerId, propertyId])
+  @@index([ownerId])
+  @@index([propertyId])
+  @@map("owner_properties")
+}
+
+// =====================================================
+// 業主通知設定表
+// =====================================================
+model OwnerNotificationSettings {
+  id                      String   @id @default(cuid())
+  
+  ownerId                 String   @unique
+  owner                   Owner    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Email 通知設定
+  emailOnNewBooking       Boolean @default(true)
+  emailOnCancellation     Boolean @default(true)
+  emailWeeklyReport       Boolean @default(true)
+  emailMonthlyReport      Boolean @default(true)
+  
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  
+  @@map("owner_notification_settings")
+}

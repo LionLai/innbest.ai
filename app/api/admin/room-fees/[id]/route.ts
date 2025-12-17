@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyAuth, handleAuthError } from '@/lib/api-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     const { id } = await params;
     const body = await request.json();
     
@@ -80,16 +83,8 @@ export async function PUT(
         fee,
       },
     });
-  } catch (err) {
-    console.error('❌ 更新雜項費用失敗:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '更新雜項費用失敗',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 
@@ -102,6 +97,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     const { id } = await params;
     
     console.log('🗑️  刪除雜項費用:', id);
@@ -132,16 +129,8 @@ export async function DELETE(
       success: true,
       message: '費用已刪除',
     });
-  } catch (err) {
-    console.error('❌ 刪除雜項費用失敗:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '刪除雜項費用失敗',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 

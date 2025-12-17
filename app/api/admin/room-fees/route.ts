@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyAuth, handleAuthError } from '@/lib/api-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,8 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: Request) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     const { searchParams } = new URL(request.url);
     
     // 篩選參數
@@ -52,16 +55,8 @@ export async function GET(request: Request) {
         count: fees.length,
       },
     });
-  } catch (err) {
-    console.error('❌ 獲取雜項費用失敗:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '獲取雜項費用失敗',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 
@@ -71,6 +66,8 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     const body = await request.json();
     
     const {
@@ -144,16 +141,8 @@ export async function POST(request: Request) {
         fee,
       },
     });
-  } catch (err) {
-    console.error('❌ 創建雜項費用失敗:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '創建雜項費用失敗',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 

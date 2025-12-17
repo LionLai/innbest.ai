@@ -1,17 +1,22 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, Session, AuthError } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+
+// 簡化的用戶接口
+interface User {
+  id: string;
+  email: string;
+  role: 'admin' | 'owner' | 'guest';
+}
 
 interface AuthContextValue {
   user: User | null;
-  session: Session | null;
   isLoading: boolean;
   isAdmin: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  refreshToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -22,73 +27,76 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // 檢查用戶是否為 admin（基於 email 或 metadata）
-  const isAdmin = user?.email?.endsWith('@innbest.ai') || 
-                  user?.user_metadata?.role === 'admin' || 
-                  false;
+  // 檢查用戶是否為 admin
+  const isAdmin = user?.role === 'admin' || false;
 
+  // 初始化：檢查用戶是否已登入
   useEffect(() => {
-    // 獲取當前 session
-    const initializeAuth = async () => {
+    const checkAuth = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+        // 嘗試調用一個受保護的 API 來驗證 token
+        const response = await fetch('/api/admin/owners');
+        
+        if (response.ok) {
+          // Token 有效，從 response headers 或其他方式獲取用戶信息
+          // 這裡簡化處理：假設已登入
+          // 實際可以添加一個 /api/auth/me endpoint 來獲取用戶信息
+          setUser({
+            id: '',
+            email: '',
+            role: 'admin', // 從 API 獲取
+          });
+        } else {
+          setUser(null);
+        }
       } catch (error) {
-        console.error('Error fetching session:', error);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
     };
 
-    initializeAuth();
+    checkAuth();
 
-    // 監聽 auth 狀態變化
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        console.log('Auth state changed:', event);
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        setIsLoading(false);
+    // 設置自動刷新 token（每 23 小時）
+    const refreshInterval = setInterval(async () => {
+      await refreshToken();
+    }, 23 * 60 * 60 * 1000);
 
-        // 根據事件類型進行路由導航
-        if (event === 'SIGNED_IN') {
-          console.log('User signed in');
-        } else if (event === 'SIGNED_OUT') {
-          console.log('User signed out');
-          router.push('/admin/login');
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [router]);
+    return () => clearInterval(refreshInterval);
+  }, []);
 
   // 登入函數
   const signIn = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 重要：攜帶 cookies
+        body: JSON.stringify({ email, password }),
       });
 
-      if (error) {
-        console.error('Sign in error:', error);
-        return { error };
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return { error: data.error || '登入失敗' };
       }
 
-      console.log('Sign in successful:', data);
+      // 設置用戶信息
+      setUser(data.user);
+      console.log('✅ [AuthContext] 登入成功:', data.user.email);
+
       return { error: null };
     } catch (error) {
-      console.error('Unexpected sign in error:', error);
-      return { error: error as AuthError };
+      console.error('[AuthContext] 登入錯誤:', error);
+      return { error: '系統錯誤' };
     } finally {
       setIsLoading(false);
     }
@@ -98,34 +106,53 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = async () => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Sign out error:', error);
-        throw error;
-      }
+
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
 
       // 清除本地狀態
       setUser(null);
-      setSession(null);
-      
+
       // 導航到登入頁面
       router.push('/admin/login');
+      
+      console.log('✅ [AuthContext] 登出成功');
     } catch (error) {
-      console.error('Unexpected sign out error:', error);
-      throw error;
+      console.error('[AuthContext] 登出錯誤:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // 刷新 token
+  const refreshToken = async () => {
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        console.log('✅ [AuthContext] Token 已刷新');
+      } else {
+        console.warn('[AuthContext] Token 刷新失敗');
+        // Token 刷新失敗，可能需要重新登入
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('[AuthContext] Token 刷新錯誤:', error);
+    }
+  };
+
   const value: AuthContextValue = {
     user,
-    session,
     isLoading,
     isAdmin,
     signIn,
     signOut,
+    refreshToken,
   };
 
   return (

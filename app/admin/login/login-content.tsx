@@ -50,12 +50,16 @@ export function LoginContent() {
 
       if (signInError) {
         // 根據錯誤類型顯示友善的錯誤訊息
-        if (signInError.message.includes('Invalid login credentials')) {
+        const errorMessage = signInError || "登入失敗，請稍後再試";
+        
+        if (errorMessage.includes('Invalid login credentials') || errorMessage.includes('帳號或密碼錯誤')) {
           setError("電子郵件或密碼錯誤");
-        } else if (signInError.message.includes('Email not confirmed')) {
+        } else if (errorMessage.includes('Email not confirmed')) {
           setError("請先確認您的電子郵件");
+        } else if (errorMessage.includes('需要管理員權限') || errorMessage.includes('ADMIN_REQUIRED')) {
+          setError("此帳號沒有管理員權限");
         } else {
-          setError(signInError.message || "登入失敗，請稍後再試");
+          setError(errorMessage);
         }
       } else {
         // 登入成功，導向 dashboard
@@ -82,7 +86,7 @@ export function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-primary/5 via-background to-accent/5 p-4">
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="text-center mb-8">

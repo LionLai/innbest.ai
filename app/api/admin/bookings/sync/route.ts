@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { syncBookingToBeds24 } from '@/lib/beds24-sync';
 import { prisma } from '@/lib/prisma';
+import { verifyAuth, handleAuthError } from '@/lib/api-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,8 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(request: Request) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     const body = await request.json();
     const { bookingId } = body;
 
@@ -98,16 +101,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-  } catch (err) {
-    console.error('❌ 手動同步 API 錯誤:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '伺服器內部錯誤',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 
@@ -116,6 +111,8 @@ export async function POST(request: Request) {
  */
 export async function PUT(request: Request) {
   try {
+    // ✅ Middleware 已完成 JWT 驗證
+    
     console.log('🔄 批量同步所有未同步訂單...');
 
     // 獲取所有未同步的訂單（包括失敗的訂單）
@@ -207,16 +204,8 @@ export async function PUT(request: Request) {
         failed: failCount,
       },
     });
-  } catch (err) {
-    console.error('❌ 批量同步 API 錯誤:', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: '伺服器內部錯誤',
-        details: err instanceof Error ? err.message : String(err),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleAuthError(error);
   }
 }
 

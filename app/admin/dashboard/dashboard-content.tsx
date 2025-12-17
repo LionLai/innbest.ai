@@ -280,14 +280,14 @@ export function DashboardContent() {
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
                 <Users className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>用戶管理</CardTitle>
+                <CardTitle>業主管理</CardTitle>
                 <CardDescription>
-                  管理系統用戶和權限
+                  管理業主帳號和權限
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full" asChild>
-                  <Link href="/admin/users">
+                  <Link href="/admin/owners">
                     前往管理
                   </Link>
                 </Button>
