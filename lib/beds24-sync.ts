@@ -277,11 +277,20 @@ async function createBeds24BookingWithRetry(booking: any, retryCount = 0): Promi
       throw new Error(`Beds24 API 錯誤: ${JSON.stringify(error)}`);
     }
 
-    const beds24BookingId = (result[0] as any).id;
+    // 檢查 API 是否回報成功
+    const responseItem = result[0] as any;
+    if (!responseItem.success) {
+      throw new Error(`Beds24 創建訂單失敗: ${JSON.stringify(responseItem)}`);
+    }
+
+    // 正確的取值方式：result[0].new.id
+    const beds24BookingId = responseItem.new?.id;
 
     if (!beds24BookingId) {
-      throw new Error('Beds24 API 未返回訂單 ID');
+      throw new Error(`Beds24 API 未返回訂單 ID，完整回應: ${JSON.stringify(result)}`);
     }
+
+    console.log(`✅ Beds24 訂單創建成功，ID: ${beds24BookingId}`);
 
     // 更新同步日誌為成功
     await prisma.syncLog.update({
