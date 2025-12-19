@@ -109,23 +109,17 @@ export async function GET(request: Request) {
     const websiteBookings = currentBookings.filter((b: any) => localBookingIds.has(b.id)).length;
     const externalBookings = totalBookings - websiteBookings;
     
-    // 4.2 總收入（只計算已確認的訂單）
-    const totalRevenue = currentBookings
-      .filter((b: any) => b.status === 'confirmed')
-      .reduce((sum: number, b: any) => sum + (b.price || 0), 0);
-    
-    const previousRevenue = previousBookings
-      .filter((b: any) => b.status === 'confirmed')
-      .reduce((sum: number, b: any) => sum + (b.price || 0), 0);
+    // 4.2 總收入（計算所有訂單）
+    const totalRevenue = currentBookings.reduce((sum: number, b: any) => sum + (b.price || 0), 0);
+    const previousRevenue = previousBookings.reduce((sum: number, b: any) => sum + (b.price || 0), 0);
 
     // 4.3 活躍房源（有訂單的唯一房間數）
     const uniqueRoomIds = new Set(currentBookings.map((b: any) => b.roomId));
     const activeRooms = uniqueRoomIds.size;
 
-    // 4.4 計算入住率（簡化版：已確認訂單的天數 / 總可用天數）
+    // 4.4 計算入住率（簡化版：所有訂單的天數 / 總可用天數）
     // 這是一個估算，精確計算需要 availability API
-    const confirmedBookings = currentBookings.filter((b: any) => b.status === 'confirmed');
-    const totalNights = confirmedBookings.reduce((sum: number, b: any) => {
+    const totalNights = currentBookings.reduce((sum: number, b: any) => {
       if (b.arrival && b.departure) {
         const arrival = new Date(b.arrival);
         const departure = new Date(b.departure);
@@ -166,17 +160,17 @@ export async function GET(request: Request) {
           externalBookings,
           totalRevenue: Math.round(totalRevenue),
           activeRooms,
-          occupancyRate: Math.round(occupancyRate * 10) / 10, // 保留一位小數
+          occupancyRate: Math.round(occupancyRate * 100) / 100, // 保留兩位小數
           
           // 增長率
           growth: {
-            bookings: bookingsGrowth >= 0 ? `+${bookingsGrowth.toFixed(1)}%` : `${bookingsGrowth.toFixed(1)}%`,
-            revenue: revenueGrowth >= 0 ? `+${revenueGrowth.toFixed(1)}%` : `${revenueGrowth.toFixed(1)}%`,
+            bookings: bookingsGrowth >= 0 ? `+${bookingsGrowth.toFixed(2)}%` : `${bookingsGrowth.toFixed(2)}%`,
+            revenue: revenueGrowth >= 0 ? `+${revenueGrowth.toFixed(2)}%` : `${revenueGrowth.toFixed(2)}%`,
           },
           
           // 額外資訊
           totalProperties,
-          confirmedBookings: confirmedBookings.length,
+          confirmedBookings: currentBookings.filter((b: any) => b.status === 'confirmed').length,
           cancelledBookings: currentBookings.filter((b: any) => b.status === 'cancelled').length,
           
           // 原始數據（供調試）

@@ -75,26 +75,31 @@ export async function GET(request: Request) {
         prevEndDate = new Date(now.getFullYear(), now.getMonth(), 0);
     }
 
-    // 1. 獲取 Beds24 訂房數據（當前期間）
+    const startDateStr = startDate.toISOString().split('T')[0];
+    const prevStartDateStr = prevStartDate.toISOString().split('T')[0];
+    const prevEndDateStr = prevEndDate.toISOString().split('T')[0];
+
+    // 1. 獲取 Beds24 訂房數據（當前期間）- 使用訂單建立時間
     const beds24Result = await beds24Client.GET('/bookings', {
       headers,
       params: {
         query: {
           propertyId: propertyIds,
-          bookingArrival: startDate.toISOString().split('T')[0],
-          // 不設置結束日期，會取到今天為止
+          bookingTimeFrom: startDateStr,
+          pageSize: 1000,
         },
       },
     });
 
-    // 2. 獲取上一期間的數據（用於計算增長率）
+    // 2. 獲取上一期間的數據（用於計算增長率）- 使用訂單建立時間
     const prevBeds24Result = await beds24Client.GET('/bookings', {
       headers,
       params: {
         query: {
           propertyId: propertyIds,
-          bookingArrival: prevStartDate.toISOString().split('T')[0],
-          bookingArrivalEnd: prevEndDate.toISOString().split('T')[0],
+          bookingTimeFrom: prevStartDateStr,
+          bookingTimeTo: prevEndDateStr,
+          pageSize: 1000,
         },
       },
     });
@@ -102,11 +107,11 @@ export async function GET(request: Request) {
     const bookings = beds24Result.data?.data || [];
     const prevBookings = prevBeds24Result.data?.data || [];
 
-    // 3. 獲取本站訂房數據
+    // 3. 獲取本站訂房數據（用於區分網站/外部訂房）
     const localBookings = await prisma.booking.findMany({
       where: {
         propertyId: { in: propertyIds },
-        checkIn: { gte: startDate },
+        createdAt: { gte: startDate },
         status: { in: ['CONFIRMED', 'PAYMENT_COMPLETED'] },
       },
       include: {
@@ -129,57 +134,41 @@ export async function GET(request: Request) {
     const totalRevenue = bookings.reduce((sum: number, b: any) => sum + (b.price || 0), 0);
     const prevTotalRevenue = prevBookings.reduce((sum: number, b: any) => sum + (b.price || 0), 0);
 
-    // 5. 獲取房源統計
-    const propertiesResult = await beds24Client.GET('/properties', {
-      headers,
-      params: {
-        query: {
-          id: propertyIds,
-          includeAllRooms: true,  // 使用 includeAllRooms 而不是 includeRooms
-        },
-      },
-    });
+    // 5. 計算活躍房源（有訂單的唯一房間數）
+    const uniqueRoomIds = new Set(bookings.map((b: any) => b.roomId).filter((id: any) => id != null));
+    const activeRooms = uniqueRoomIds.size;
 
-    const properties = propertiesResult.data?.data || [];
-    const totalProperties = properties.length;
-    
-    // 計算總房間數量（累加每個房型的數量）
-    const activeRooms = properties.reduce((sum: number, p: any) => {
-      if (!p.roomTypes || !Array.isArray(p.roomTypes)) return sum;
-      
-      // 累加每個房型的房間數量
-      const propertyRooms = p.roomTypes.reduce(
-        (roomSum: number, roomType: any) => roomSum + (roomType.qty || 0),
-        0
-      );
-      
-      return sum + propertyRooms;
-    }, 0);
+    // 6. 獲取物業數量
+    const uniquePropertyIds = new Set(bookings.map((b: any) => b.propertyId).filter((id: any) => id != null));
+    const totalProperties = uniquePropertyIds.size;
 
-    // 6. 計算入住率（簡化版：已訂天數 / 總可用天數）
+    // 7. 計算入住率（簡化版：已訂天數 / 總可用天數）- 計算所有訂單
     const daysInPeriod = Math.ceil(
       (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
     );
     const totalRoomNights = activeRooms * daysInPeriod;
     const bookedNights = bookings.reduce((sum: number, b: any) => {
-      const checkIn = new Date(b.arrival);
-      const checkOut = new Date(b.departure);
-      const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-      return sum + nights;
+      if (b.arrival && b.departure) {
+        const checkIn = new Date(b.arrival);
+        const checkOut = new Date(b.departure);
+        const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+        return sum + nights;
+      }
+      return sum;
     }, 0);
 
     const occupancyRate =
-      totalRoomNights > 0 ? Math.round((bookedNights / totalRoomNights) * 100) : 0;
+      totalRoomNights > 0 ? (bookedNights / totalRoomNights) * 100 : 0;
 
-    // 7. 計算增長率
+    // 8. 計算增長率（保留兩位小數）
     const bookingsGrowth =
       prevTotalBookings > 0
-        ? Math.round(((totalBookings - prevTotalBookings) / prevTotalBookings) * 100)
+        ? ((totalBookings - prevTotalBookings) / prevTotalBookings) * 100
         : 0;
 
     const revenueGrowth =
       prevTotalRevenue > 0
-        ? Math.round(((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100)
+        ? ((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100
         : 0;
 
     return NextResponse.json({
@@ -189,13 +178,13 @@ export async function GET(request: Request) {
           totalBookings,
           websiteBookings,
           externalBookings,
-          totalRevenue,
+          totalRevenue: Math.round(totalRevenue),
           activeRooms,
           totalProperties,
-          occupancyRate,
+          occupancyRate: Math.round(occupancyRate * 100) / 100, // 保留兩位小數
           growth: {
-            bookings: `${bookingsGrowth >= 0 ? '+' : ''}${bookingsGrowth}%`,
-            revenue: `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth}%`,
+            bookings: bookingsGrowth >= 0 ? `+${bookingsGrowth.toFixed(2)}%` : `${bookingsGrowth.toFixed(2)}%`,
+            revenue: revenueGrowth >= 0 ? `+${revenueGrowth.toFixed(2)}%` : `${revenueGrowth.toFixed(2)}%`,
           },
         },
       },
