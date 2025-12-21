@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Noto_Sans_JP, Noto_Serif_JP } from 'next/font/google'
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner"
 import "./globals.css"
 
 const notoSans = Noto_Sans_JP({ 
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className={`${notoSans.variable} ${notoSerif.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           {children}
+          <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
       </body>
     </html>

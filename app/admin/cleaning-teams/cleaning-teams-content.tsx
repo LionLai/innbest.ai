@@ -30,6 +30,7 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface CleaningTeam {
   id: string;
@@ -121,7 +122,7 @@ export function CleaningTeamsContent() {
     try {
       // 驗證至少選擇一個物業
       if (formData.propertyIds.length === 0) {
-        alert("請至少選擇一個物業");
+        toast.error("請至少選擇一個物業");
         return;
       }
 
@@ -156,16 +157,17 @@ export function CleaningTeamsContent() {
       const result = await response.json();
 
       if (result.success) {
+        toast.success(editingTeam ? "團隊更新成功" : "團隊創建成功");
         await fetchTeams();
         setIsCreateDialogOpen(false);
         setEditingTeam(null);
         resetForm();
       } else {
-        alert(result.error || "操作失敗");
+        toast.error(result.error || "操作失敗");
       }
     } catch (err) {
       console.error("操作失敗:", err);
-      alert("系統錯誤");
+      toast.error("系統錯誤");
     }
   };
 
@@ -194,13 +196,14 @@ export function CleaningTeamsContent() {
       const result = await response.json();
 
       if (result.success) {
+        toast.success("團隊刪除成功");
         await fetchTeams();
       } else {
-        alert(result.error || "刪除失敗");
+        toast.error(result.error || "刪除失敗");
       }
     } catch (err) {
       console.error("刪除失敗:", err);
-      alert("系統錯誤");
+      toast.error("系統錯誤");
     }
   };
 
@@ -212,18 +215,31 @@ export function CleaningTeamsContent() {
 
       const result = await response.json();
 
-      if (result.success) {
-        alert("✅ 測試通知已發送！\n\n" + 
-          result.results.map((r: any) => 
-            `${r.channel}: ${r.success ? '✅ 成功' : '❌ 失敗' + (r.error ? ` (${r.error})` : '')}`
-          ).join('\n')
-        );
+      // 檢查是否有 results 數組（表示有執行測試）
+      if (result.results && Array.isArray(result.results)) {
+        const successCount = result.results.filter((r: any) => r.success).length;
+        const totalCount = result.results.length;
+        
+        const description = result.results.map((r: any) => {
+          const channelName = r.channel === 'wechat' ? '企業微信' : 
+                            r.channel === 'discord' ? 'Discord' : r.channel;
+          return `${channelName}: ${r.success ? '✅ 成功' : '❌ 失敗'}${r.error ? ` (${r.error})` : ''}`;
+        }).join(' | ');
+        
+        if (successCount === totalCount) {
+          toast.success("所有渠道測試成功", { description });
+        } else if (successCount > 0) {
+          toast.warning(`部分渠道測試成功 (${successCount}/${totalCount})`, { description });
+        } else {
+          toast.error("所有渠道測試失敗", { description });
+        }
       } else {
-        alert("測試失敗：" + result.error);
+        // 如果沒有 results，使用原來的錯誤處理
+        toast.error("測試失敗：" + (result.error || result.message || "未知錯誤"));
       }
     } catch (err) {
       console.error("測試失敗:", err);
-      alert("系統錯誤");
+      toast.error("系統錯誤");
     }
   };
 

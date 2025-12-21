@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
+import { toast } from "sonner";
 
 interface CleaningTask {
   id: string;
@@ -169,13 +170,14 @@ export function CleaningTasksContent() {
       const result = await response.json();
 
       if (result.success) {
+        toast.success("任務狀態已更新");
         await fetchTasks();
       } else {
-        alert(result.error || "更新失敗");
+        toast.error(result.error || "更新失敗");
       }
     } catch (err) {
       console.error("更新失敗:", err);
-      alert("系統錯誤");
+      toast.error("系統錯誤");
     }
   };
 
@@ -200,19 +202,19 @@ export function CleaningTasksContent() {
         
         // 顯示同步結果
         const { created, updated, cancelled } = result.data;
-        const message = `✅ 同步完成！\n\n新增任務：${created} 個\n更新任務：${updated} 個\n取消任務：${cancelled} 個`;
-        alert(message);
+        const description = `新增任務：${created} 個 | 更新任務：${updated} 個 | 取消任務：${cancelled} 個`;
+        toast.success("同步完成", { description });
 
         // 重新載入任務列表
         await fetchTasks();
       } else {
         setError(result.error || "同步失敗");
-        alert("同步失敗：" + result.error);
+        toast.error("同步失敗", { description: result.error });
       }
     } catch (err) {
       console.error("同步失敗:", err);
       setError("網路錯誤");
-      alert("同步失敗：網路錯誤");
+      toast.error("同步失敗：網路錯誤");
     } finally {
       setIsSyncing(false);
     }
@@ -241,27 +243,25 @@ export function CleaningTasksContent() {
 
       if (result.success) {
         const { sent, taskCount, results } = result;
-        let successMsg = `✅ 通知已發送！\n\n`;
-        successMsg += `任務數：${taskCount} 個\n`;
-        successMsg += `發送次數：${sent} 次\n\n`;
+        
+        let description = `任務數：${taskCount} 個 | 發送次數：${sent} 次`;
         
         if (results && results.length > 0) {
-          successMsg += '詳細結果：\n';
-          results.forEach((r: any) => {
-            const status = r.success ? '✅ 成功' : '❌ 失敗';
-            successMsg += `${r.team} (${r.channel}): ${status}\n`;
-            if (r.error) successMsg += `  原因：${r.error}\n`;
-          });
+          const detailResults = results.map((r: any) => {
+            const status = r.success ? '✅' : '❌';
+            return `${r.team} (${r.channel}): ${status}`;
+          }).join(' | ');
+          description += ` | ${detailResults}`;
         }
         
-        alert(successMsg);
+        toast.success("通知已發送", { description });
         await fetchTasks();
       } else {
-        alert("發送通知失敗：" + result.error);
+        toast.error("發送通知失敗", { description: result.error });
       }
     } catch (err) {
       console.error("發送通知失敗:", err);
-      alert("發送通知失敗：網路錯誤");
+      toast.error("發送通知失敗：網路錯誤");
     } finally {
       setIsNotifying(false);
       setNotifyingTaskId(null);

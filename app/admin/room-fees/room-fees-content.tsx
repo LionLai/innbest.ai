@@ -43,6 +43,7 @@ import {
   Home,
 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface RoomFee {
   id: string;
@@ -196,13 +197,14 @@ export function RoomFeesContent() {
       const result = await response.json();
       
       if (result.success) {
+        toast.success(dialogMode === 'add' ? '費用已新增' : '費用已更新');
         setDialogOpen(false);
         fetchFees();
       } else {
-        alert(`錯誤：${result.error}`);
+        toast.error(`錯誤：${result.error}`);
       }
     } catch (err) {
-      alert('網路錯誤，請稍後再試');
+      toast.error('網路錯誤，請稍後再試');
       console.error(err);
     }
   };
@@ -221,12 +223,13 @@ export function RoomFeesContent() {
       const result = await response.json();
       
       if (result.success) {
+        toast.success('費用已刪除');
         fetchFees();
       } else {
-        alert(`錯誤：${result.error}`);
+        toast.error(`錯誤：${result.error}`);
       }
     } catch (err) {
-      alert('網路錯誤，請稍後再試');
+      toast.error('網路錯誤，請稍後再試');
       console.error(err);
     }
   };
