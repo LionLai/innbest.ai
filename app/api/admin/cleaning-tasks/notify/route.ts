@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { notificationManager } from '@/lib/notifications/manager';
+import { getTodayInTokyo, dateToUTC, formatDateInTokyo } from '@/lib/timezone-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,12 +37,20 @@ export async function POST(request: Request) {
 
     // 根據類型獲取任務
     if (type === 'daily') {
-      // 當日通知 - 獲取今天需要清掃的任務
+      // 當日通知 - 獲取今天需要清掃的任務（基於日本時間）
       notificationType = 'DAILY';
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      
+      // 使用日本時間的今天
+      const todayJST = getTodayInTokyo();
+      const todayStr = formatDateInTokyo(todayJST);
+      
+      // 轉換為 UTC 存儲格式
+      const today = dateToUTC(todayStr);
       const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+
+      console.log(`[Manual Notify] 查詢今日任務（日本時間 ${todayStr}）`);
+      console.log(`[Manual Notify] UTC 查詢範圍: ${today.toISOString()} ~ ${tomorrow.toISOString()}`);
 
       tasks = await prisma.cleaningTask.findMany({
         where: {
@@ -64,19 +73,27 @@ export async function POST(request: Request) {
 
       console.log(`[Manual Notify] 找到 ${tasks.length} 個今日任務`);
     } else if (type === 'weekly') {
-      // 當週通知 - 獲取本週需要清掃的任務
+      // 當週通知 - 獲取本週需要清掃的任務（基於日本時間）
       notificationType = 'WEEKLY';
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
       
-      // 計算本週一
-      const dayOfWeek = today.getDay();
-      const monday = new Date(today);
-      monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+      // 使用日本時間的今天
+      const todayJST = getTodayInTokyo();
+      const todayStr = formatDateInTokyo(todayJST);
+      const todayUTC = dateToUTC(todayStr);
+      
+      // 計算本週一（日本時間）
+      const dayOfWeek = todayJST.getDay();
+      const mondayJST = new Date(todayJST);
+      mondayJST.setDate(todayJST.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+      const mondayStr = formatDateInTokyo(mondayJST);
+      const monday = dateToUTC(mondayStr);
       
       // 計算下週一
       const nextMonday = new Date(monday);
-      nextMonday.setDate(monday.getDate() + 7);
+      nextMonday.setUTCDate(monday.getUTCDate() + 7);
+
+      console.log(`[Manual Notify] 查詢本週任務（日本時間 ${mondayStr} ~ 下週一）`);
+      console.log(`[Manual Notify] UTC 查詢範圍: ${monday.toISOString()} ~ ${nextMonday.toISOString()}`);
 
       tasks = await prisma.cleaningTask.findMany({
         where: {

@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { notificationManager } from '@/lib/notifications/manager';
 import type { NotificationMessage, CleaningTaskSummary } from '@/lib/notifications/base';
+import { getTodayInTokyo, dateToUTC, formatDateInTokyo } from '@/lib/timezone-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,12 +28,17 @@ export async function GET(request: Request) {
 
     console.log('🕐 [Cron] 開始發送每週清掃通知...');
 
-    // 獲取本週的所有清掃任務（週一到週日）
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // 獲取本週的所有清掃任務（基於日本時間）
+    const todayJST = getTodayInTokyo();
+    const todayStr = formatDateInTokyo(todayJST);
     
+    // 轉換為 UTC 存儲格式
+    const today = dateToUTC(todayStr);
     const nextWeek = new Date(today);
-    nextWeek.setDate(nextWeek.getDate() + 7);
+    nextWeek.setUTCDate(nextWeek.getUTCDate() + 7);
+
+    console.log(`📅 查詢本週任務（日本時間: ${todayStr} 起未來 7 天）`);
+    console.log(`📅 UTC 查詢範圍: ${today.toISOString()} ~ ${nextWeek.toISOString()}`);
 
     const weeklyTasks = await prisma.cleaningTask.findMany({
       where: {
