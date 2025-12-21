@@ -73,33 +73,28 @@ export async function POST(request: Request) {
 
       console.log(`[Manual Notify] 找到 ${tasks.length} 個今日任務`);
     } else if (type === 'weekly') {
-      // 當週通知 - 獲取本週需要清掃的任務（基於日本時間）
+      // 當週通知 - 獲取未來 7 天需要清掃的任務（基於日本時間）
       notificationType = 'WEEKLY';
       
       // 使用日本時間的今天
       const todayJST = getTodayInTokyo();
       const todayStr = formatDateInTokyo(todayJST);
-      const todayUTC = dateToUTC(todayStr);
       
-      // 計算本週一（日本時間）
-      const dayOfWeek = todayJST.getDay();
-      const mondayJST = new Date(todayJST);
-      mondayJST.setDate(todayJST.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-      const mondayStr = formatDateInTokyo(mondayJST);
-      const monday = dateToUTC(mondayStr);
+      // 轉換為 UTC 存儲格式
+      const today = dateToUTC(todayStr);
       
-      // 計算下週一
-      const nextMonday = new Date(monday);
-      nextMonday.setUTCDate(monday.getUTCDate() + 7);
+      // 計算未來 7 天（不受星期幾影響）
+      const nextWeek = new Date(today);
+      nextWeek.setUTCDate(nextWeek.getUTCDate() + 7);
 
-      console.log(`[Manual Notify] 查詢本週任務（日本時間 ${mondayStr} ~ 下週一）`);
-      console.log(`[Manual Notify] UTC 查詢範圍: ${monday.toISOString()} ~ ${nextMonday.toISOString()}`);
+      console.log(`[Manual Notify] 查詢當週任務（日本時間: ${todayStr} 起未來 7 天）`);
+      console.log(`[Manual Notify] UTC 查詢範圍: ${today.toISOString()} ~ ${nextWeek.toISOString()}`);
 
       tasks = await prisma.cleaningTask.findMany({
         where: {
           cleaningDate: {
-            gte: monday,
-            lt: nextMonday,
+            gte: today,
+            lt: nextWeek,
           },
           status: {
             in: ['PENDING', 'NOTIFIED'],
@@ -114,7 +109,7 @@ export async function POST(request: Request) {
         ],
       });
 
-      console.log(`[Manual Notify] 找到 ${tasks.length} 個本週任務`);
+      console.log(`[Manual Notify] 找到 ${tasks.length} 個當週任務（未來 7 天）`);
     } else if (type === 'task') {
       // 單個任務通知
       if (!taskId) {
