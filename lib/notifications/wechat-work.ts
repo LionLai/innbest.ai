@@ -3,6 +3,7 @@
  */
 
 import { INotificationChannel, NotificationMessage, NotificationResult } from './base';
+import { formatDateInTokyo } from '../timezone-utils';
 
 export class WechatWorkChannel implements INotificationChannel {
   name = 'WeChat Work';
@@ -63,7 +64,7 @@ export class WechatWorkChannel implements INotificationChannel {
 
     let content = `### 🧹 ${message.title}\n\n`;
     content += `**時間：** ${new Date().toLocaleString('zh-TW', {
-      timeZone: 'Asia/Taipei',
+      timeZone: 'Asia/Tokyo',
     })}\n\n`;
 
     if (message.type === 'weekly') {
@@ -82,9 +83,9 @@ export class WechatWorkChannel implements INotificationChannel {
       message.tasks.forEach((task, index) => {
         const emoji = urgencyEmoji[task.urgency as keyof typeof urgencyEmoji] || '⚪';
         
-        // 格式化日期：只顯示日期部分 (YYYY-MM-DD)
-        const checkOutDate = task.checkOutDate.split('T')[0];
-        const nextCheckIn = task.nextCheckIn ? task.nextCheckIn.split('T')[0] : null;
+        // 格式化日期：將 UTC 時間轉換為日本時區日期 (YYYY-MM-DD)
+        const checkOutDate = formatDateInTokyo(new Date(task.checkOutDate));
+        const nextCheckIn = task.nextCheckIn ? formatDateInTokyo(new Date(task.nextCheckIn)) : null;
         
         content += `#### ${emoji} 任務 ${index + 1}\n`;
         content += `> **物業：** ${task.propertyName}\n`;

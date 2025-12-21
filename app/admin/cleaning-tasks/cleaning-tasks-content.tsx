@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
+import { toZonedTime } from "date-fns-tz";
 import { toast } from "sonner";
 
 interface CleaningTask {
@@ -269,7 +270,10 @@ export function CleaningTasksContent() {
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "yyyy/MM/dd (E)", { locale: zhTW });
+    // 將 UTC 日期轉換為日本時區顯示
+    const date = new Date(dateString);
+    const tokyoDate = toZonedTime(date, 'Asia/Tokyo');
+    return format(tokyoDate, "yyyy/MM/dd (E)", { locale: zhTW });
   };
 
   const getTodayTasks = () => {

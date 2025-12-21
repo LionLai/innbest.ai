@@ -122,10 +122,10 @@ export async function PATCH(
             id: task.id,
             propertyName: task.propertyName,
             roomName: task.roomName,
-            checkOutDate: task.checkOutDate.toISOString().split('T')[0],
+            checkOutDate: task.checkOutDate.toISOString(), // 傳遞完整 ISO 字符串
             checkOutTime: task.checkOutTime || '12:00',
             urgency: task.urgency,
-            nextCheckIn: task.nextCheckIn?.toISOString().split('T')[0],
+            nextCheckIn: task.nextCheckIn?.toISOString(), // 傳遞完整 ISO 字符串
           }],
           urgency: task.urgency,
         };

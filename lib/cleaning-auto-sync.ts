@@ -7,7 +7,7 @@
 import { prisma } from './prisma';
 import { beds24Client, getBeds24Headers } from './beds24-client';
 import type { CleaningTeam, CleaningUrgency } from './generated/prisma';
-import { getTodayInTokyo, parseDateInTokyo, formatDateInTokyo } from './timezone-utils';
+import { getTodayInTokyo, formatDateInTokyo, dateToUTC } from './timezone-utils';
 
 interface SyncStats {
   created: number;
@@ -35,17 +35,19 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
   try {
     const headers = await getBeds24Headers();
     
-    // 使用日本時間計算日期（JST, GMT+9）
-    const today = getTodayInTokyo();
+    // 使用日本時間計算"今天"（業務邏輯基準）
+    const todayJST = getTodayInTokyo();
+    const todayStr = formatDateInTokyo(todayJST);
     
-    // 1. 一次抓取所有確認訂單（從今天開始，未來一年內的退房）
-    const endDate = new Date(today);
-    endDate.setFullYear(endDate.getFullYear() + 1); // 查詢未來一年內的訂單
-    
-    const todayStr = formatDateInTokyo(today);
-    const endDateStr = formatDateInTokyo(endDate);
+    // 計算一年後的日期
+    const endDateJST = new Date(todayJST);
+    endDateJST.setFullYear(endDateJST.getFullYear() + 1);
+    const endDateStr = formatDateInTokyo(endDateJST);
     
     console.log(`📅 查詢確認訂單（退房日期: ${todayStr} ~ ${endDateStr}）[日本時間基準]`);
+    
+    // 轉換為 UTC 存儲格式（用於資料庫操作）
+    const today = dateToUTC(todayStr);
 
     const { data, error } = await beds24Client.GET('/bookings', {
       headers,
@@ -168,15 +170,15 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
         const propertyId = booking.propertyId;
         const roomId = booking.roomId;
         
-        // 使用日本時間解析退房日期
-        const checkOutDate = parseDateInTokyo(booking.departure);
+        // 將 Beds24 日期轉換為 UTC 午夜（資料庫存儲格式）
+        const checkOutDate = dateToUTC(booking.departure);
         
         // 調試：記錄前5筆訂單的退房日期資訊
         if (processedCount < 5) {
           console.log(`\n📋 處理訂單 ${beds24BookingId}:`);
           console.log(`   arrival: ${booking.arrival}`);
           console.log(`   departure: ${booking.departure}`);
-          console.log(`   退房日期（JST）: ${formatDateInTokyo(checkOutDate)}`);
+          console.log(`   退房日期（UTC 存儲）: ${checkOutDate.toISOString()}`);
           console.log(`   物業: ${propertyId}, 房間: ${roomId}`);
         }
         
@@ -207,7 +209,7 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
           checkOutDate,
           checkOutTime: '12:00',
           cleaningDate: checkOutDate, // 退房當天清掃
-          nextCheckIn: nextBooking?.arrival ? new Date(nextBooking.arrival) : null,
+          nextCheckIn: nextBooking?.arrival ? dateToUTC(nextBooking.arrival) : null,
           urgency,
           teamId: team?.id || null,
           lastSyncAt: new Date(),
@@ -356,8 +358,8 @@ function findNextBookingInMemory(
 
   // 查找退房日期當天或之後的第一筆入住
   for (const booking of roomBookings) {
-    // 使用日本時間解析入住日期
-    const arrivalDate = parseDateInTokyo(booking.arrival!);
+    // 將入住日期轉換為 UTC（與 checkOutDate 格式一致）
+    const arrivalDate = dateToUTC(booking.arrival!);
     
     if (arrivalDate >= checkOutDate) {
       console.log(`   🔍 找到下一筆入住: ${booking.arrival} (房間 ${roomId})`);
@@ -380,8 +382,8 @@ function calculateCleaningUrgency(
     return 'LOW'; // 沒有下一筆入住
   }
 
-  // 使用日本時間解析入住日期
-  const nextCheckIn = parseDateInTokyo(nextCheckInDate);
+  // 將入住日期轉換為 UTC（與 checkOutDate 格式一致）
+  const nextCheckIn = dateToUTC(nextCheckInDate);
   const hoursUntilNextCheckIn = 
     (nextCheckIn.getTime() - checkOutDate.getTime()) / (1000 * 60 * 60);
 

@@ -88,3 +88,33 @@ export function isTodayInTokyo(date: Date): boolean {
   return date >= today && date < tomorrow;
 }
 
+/**
+ * 將日期字符串轉換為 UTC 午夜的 Date 對象（用於資料庫存儲）
+ * @param dateStr 日期字符串，格式：YYYY-MM-DD
+ * @returns Date 對象，表示該日期在 UTC 時區的午夜（00:00:00.000Z）
+ * 
+ * @example
+ * dateToUTC('2025-12-22') // 返回 2025-12-22T00:00:00.000Z
+ * 
+ * 用途：
+ * - 存入資料庫時，統一存儲為 UTC 午夜
+ * - 查詢時可以直接按日期比較
+ * - UI 層負責轉換顯示
+ */
+export function dateToUTC(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+}
+
+/**
+ * 將 Date 對象格式化為 UTC 日期字符串（YYYY-MM-DD）
+ * @param date Date 對象
+ * @returns UTC 日期字符串，格式：YYYY-MM-DD
+ */
+export function formatDateUTC(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
