@@ -50,6 +50,7 @@ model Booking {
   paymentId         String?  @unique
   payment           Payment? @relation(fields: [paymentId], references: [id])
   syncLogs          SyncLog[]
+  cleaningTasks     CleaningTask[]  // 關聯的清掃任務
   
   // 時間戳記
   createdAt         DateTime @default(now())
@@ -269,4 +270,156 @@ model OwnerNotificationSettings {
   updatedAt               DateTime @updatedAt
   
   @@map("owner_notification_settings")
+}
+
+// =====================================================
+// 清掃管理系統
+// =====================================================
+
+// 清掃團隊表
+model CleaningTeam {
+  id                String   @id @default(cuid())
+  
+  // 基本資訊
+  name              String                    // 團隊名稱
+  description       String?                   // 描述
+  
+  // 負責區域
+  propertyIds       Int[]                     // 負責的物業 IDs（陣列）
+  
+  // 通知渠道配置（JSON 格式，支援多渠道）
+  notificationChannels Json                   // { "wechat": { "enabled": true, "webhookUrl": "..." }, ... }
+  
+  // 狀態
+  isActive          Boolean  @default(true)
+  
+  // 關聯
+  tasks             CleaningTask[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([propertyIds])
+  @@map("cleaning_teams")
+}
+
+// 清掃任務表
+model CleaningTask {
+  id              String   @id @default(cuid())
+  
+  // Beds24 訂單關聯
+  beds24BookingId Int      @unique           // Beds24 訂單 ID（唯一鍵，避免重複）
+  bookingId       String?                    // 本地訂單 ID（如果是網站訂單）
+  booking         Booking? @relation(fields: [bookingId], references: [id])
+  
+  // 房間資訊（冗餘存儲，避免每次查詢 Beds24）
+  propertyId      Int
+  propertyName    String
+  roomId          Int
+  roomName        String
+  
+  // 日期資訊
+  checkOutDate    DateTime              // 退房日期
+  checkOutTime    String?               // 退房時間（如：12:00）
+  cleaningDate    DateTime              // 計劃清掃日期（通常 = 退房當天）
+  nextCheckIn     DateTime?             // 下一筆入住日期（用於判斷優先級）
+  
+  // 清掃優先級（自動計算）
+  urgency         CleaningUrgency       // 根據下一筆入住時間自動判斷
+  
+  // 清掃團隊（自動分配）
+  teamId          String?
+  team            CleaningTeam? @relation(fields: [teamId], references: [id])
+  
+  // 狀態
+  status          CleaningStatus @default(PENDING)
+  completedAt     DateTime?
+  notes           String?   @db.Text    // 備註
+  
+  // 通知記錄
+  notifications   CleaningNotification[]
+  
+  // 同步資訊
+  lastSyncAt      DateTime @default(now())  // 最後同步時間
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([beds24BookingId])
+  @@index([cleaningDate])
+  @@index([status])
+  @@index([teamId])
+  @@map("cleaning_tasks")
+}
+
+// 清掃優先級
+enum CleaningUrgency {
+  LOW       // 低優先級（3天後才有下一筆入住）
+  NORMAL    // 正常（1-2天後有入住）
+  HIGH      // 高優先級（當天有入住）
+  URGENT    // 緊急（2小時內有入住，或臨時取消）
+}
+
+// 清掃狀態
+enum CleaningStatus {
+  PENDING       // 待清掃
+  NOTIFIED      // 已通知（發送過通知）
+  COMPLETED     // 已完成（手動標記）
+  CANCELLED     // 已取消（訂單取消）
+}
+
+// 清掃通知歷史表
+model CleaningNotification {
+  id              String   @id @default(cuid())
+  
+  // 可以關聯單一任務或批量通知
+  taskId          String?
+  task            CleaningTask? @relation(fields: [taskId], references: [id])
+  
+  teamId          String                     // 接收通知的團隊
+  
+  // 通知類型
+  notificationType NotificationType          // DAILY 或 WEEKLY
+  
+  // 通知資訊
+  channel         NotificationChannel        // 通知渠道
+  recipient       String                     // 接收者（群名稱或 webhook URL）
+  message         String   @db.Text          // 通知內容
+  taskCount       Int      @default(0)       // 包含的任務數量
+  
+  // 狀態
+  status          NotificationStatus
+  sentAt          DateTime?
+  errorMessage    String?  @db.Text
+  retryCount      Int      @default(0)       // 重試次數
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([teamId])
+  @@index([notificationType])
+  @@index([sentAt])
+  @@map("cleaning_notifications")
+}
+
+// 通知類型
+enum NotificationType {
+  DAILY         // 日報
+  WEEKLY        // 週報
+  IMMEDIATE     // 即時通知（新訂單、取消等）
+}
+
+// 通知渠道
+enum NotificationChannel {
+  WECHAT_WORK   // 企業微信
+  DISCORD       // Discord
+  EMAIL         // Email
+  TELEGRAM      // Telegram（預留）
+}
+
+// 通知狀態
+enum NotificationStatus {
+  PENDING       // 待發送
+  SENT          // 已發送
+  FAILED        // 發送失敗
+  RETRYING      // 重試中
 }

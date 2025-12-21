@@ -17,6 +17,8 @@ import {
   DollarSign,
   Home,
   RefreshCw,
+  Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -37,6 +39,7 @@ interface DashboardStats {
 export function DashboardContent() {
   const { user, signOut, isAdmin } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [todayCleaningTasks, setTodayCleaningTasks] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,13 +57,22 @@ export function DashboardContent() {
     setError(null);
     
     try {
-      const response = await fetch('/api/admin/stats?period=month');
-      const result = await response.json();
+      const [statsResponse, tasksResponse] = await Promise.all([
+        fetch('/api/admin/stats?period=month'),
+        fetch(`/api/admin/cleaning-tasks?date=${new Date().toISOString().split('T')[0]}&status=PENDING,NOTIFIED`)
+      ]);
       
-      if (result.success) {
-        setStats(result.data.stats);
+      const statsResult = await statsResponse.json();
+      const tasksResult = await tasksResponse.json();
+      
+      if (statsResult.success) {
+        setStats(statsResult.data.stats);
       } else {
-        setError(result.error || '載入統計失敗');
+        setError(statsResult.error || '載入統計失敗');
+      }
+
+      if (tasksResult.success) {
+        setTodayCleaningTasks(tasksResult.data.length);
       }
     } catch (err) {
       setError('網路錯誤，請稍後再試');
@@ -137,6 +149,27 @@ export function DashboardContent() {
               </div>
             )}
           </div>
+
+          {/* 今日清掃任務提示 */}
+          {!isLoading && todayCleaningTasks > 0 && (
+            <Card className="mb-6 border-orange-200 bg-orange-50">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-orange-600" />
+                    <CardTitle className="text-orange-900">
+                      今日待處理清掃任務：{todayCleaningTasks} 個
+                    </CardTitle>
+                  </div>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/admin/cleaning-tasks">
+                      查看詳情
+                    </Link>
+                  </Button>
+                </div>
+              </CardHeader>
+            </Card>
+          )}
 
           {/* Stats Cards */}
           {isLoading ? (
@@ -271,6 +304,40 @@ export function DashboardContent() {
               <CardContent>
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/admin/availability">
+                    前往管理
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <Sparkles className="h-8 w-8 mb-2 text-primary" />
+                <CardTitle>清掃團隊</CardTitle>
+                <CardDescription>
+                  管理清掃團隊和通知設定
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/admin/cleaning-teams">
+                    前往管理
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <Sparkles className="h-8 w-8 mb-2 text-primary" />
+                <CardTitle>清掃任務</CardTitle>
+                <CardDescription>
+                  查看和管理清掃排程
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/admin/cleaning-tasks">
                     前往管理
                   </Link>
                 </Button>

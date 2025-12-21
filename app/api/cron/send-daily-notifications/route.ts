@@ -1,0 +1,147 @@
+/**
+ * 發送每日清掃通知 Cron Job
+ * 每天早上 8:00 執行
+ * 
+ * Vercel Cron: 0 8 * * *
+ */
+
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { notificationManager } from '@/lib/notifications/manager';
+import type { NotificationMessage, CleaningTaskSummary } from '@/lib/notifications/base';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+  try {
+    // 驗證 Cron Secret
+    const authHeader = request.headers.get('authorization');
+    
+    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      console.warn('❌ Cron 認證失敗');
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    console.log('🕐 [Cron] 開始發送每日清掃通知...');
+
+    // 獲取今天的清掃任務
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const todayTasks = await prisma.cleaningTask.findMany({
+      where: {
+        cleaningDate: {
+          gte: today,
+          lt: tomorrow,
+        },
+        status: { in: ['PENDING', 'NOTIFIED'] },
+      },
+      include: {
+        team: true,
+      },
+      orderBy: {
+        urgency: 'desc', // 按優先級排序
+      },
+    });
+
+    console.log(`📋 今日共有 ${todayTasks.length} 個清掃任務`);
+
+    if (todayTasks.length === 0) {
+      console.log('✨ 今日無清掃任務，跳過通知');
+      return NextResponse.json({
+        success: true,
+        message: '今日無清掃任務',
+        taskCount: 0,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    // 按團隊分組
+    const tasksByTeam = new Map<string, typeof todayTasks>();
+    
+    for (const task of todayTasks) {
+      if (!task.team) continue;
+      
+      const teamId = task.team.id;
+      if (!tasksByTeam.has(teamId)) {
+        tasksByTeam.set(teamId, []);
+      }
+      tasksByTeam.get(teamId)!.push(task);
+    }
+
+    const results = [];
+
+    // 為每個團隊發送通知
+    for (const [teamId, tasks] of tasksByTeam.entries()) {
+      const team = tasks[0].team;
+      if (!team) continue;
+
+      const taskSummaries: CleaningTaskSummary[] = tasks.map(task => ({
+        id: task.id,
+        propertyName: task.propertyName,
+        roomName: task.roomName,
+        checkOutDate: task.checkOutDate.toISOString().split('T')[0],
+        checkOutTime: task.checkOutTime || '12:00',
+        urgency: task.urgency,
+        nextCheckIn: task.nextCheckIn?.toISOString().split('T')[0],
+      }));
+
+      const message: NotificationMessage = {
+        type: 'daily',
+        title: '今日清掃任務',
+        content: `${team.name} 今日有 ${tasks.length} 個清掃任務`,
+        tasks: taskSummaries,
+      };
+
+      const sendResults = await notificationManager.sendToTeam(team, message);
+      
+      results.push({
+        teamId,
+        teamName: team.name,
+        taskCount: tasks.length,
+        results: sendResults,
+      });
+
+      // 更新任務狀態為已通知
+      await prisma.cleaningTask.updateMany({
+        where: {
+          id: { in: tasks.map(t => t.id) },
+        },
+        data: {
+          status: 'NOTIFIED',
+        },
+      });
+
+      console.log(`✅ 已通知團隊 ${team.name}，共 ${tasks.length} 個任務`);
+    }
+
+    console.log('✅ [Cron] 每日通知發送完成');
+
+    return NextResponse.json({
+      success: true,
+      message: '每日通知發送完成',
+      teamCount: tasksByTeam.size,
+      totalTasks: todayTasks.length,
+      results,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('❌ [Cron] 每日通知發送失敗:', error);
+    
+    return NextResponse.json(
+      {
+        success: false,
+        error: '每日通知發送失敗',
+        details: String(error),
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
+  }
+}
+

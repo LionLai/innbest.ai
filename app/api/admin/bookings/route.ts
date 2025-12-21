@@ -160,6 +160,13 @@ export async function GET(request: Request) {
       filteredBookings = enrichedBookings.filter((b: any) => b._local.source === 'external');
     }
 
+    // 按入住時間排序（從早到晚）
+    filteredBookings.sort((a: any, b: any) => {
+      const dateA = new Date(a.arrival || 0).getTime();
+      const dateB = new Date(b.arrival || 0).getTime();
+      return dateA - dateB; // 升冪排列（最早的入住日期在前）
+    });
+
     console.log(`✅ 返回 ${filteredBookings.length} 筆訂房（${enrichedBookings.filter((b: any) => b._local.source === 'website').length} 筆網站訂房，${enrichedBookings.filter((b: any) => b._local.source === 'external').length} 筆外部訂房）`);
 
     // ========================================
