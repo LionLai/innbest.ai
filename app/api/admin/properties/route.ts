@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { beds24Client, getBeds24Headers } from "@/lib/beds24-client";
+import { filterProperties, filterPropertyRooms } from "@/lib/filters/room-filter";
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,10 @@ export async function GET(request: Request) {
   try {
     // 從 session cookie 獲取認證 headers
     const headers = await getBeds24Headers();
+    
+    // 查詢參數：是否包含被排除的項目
+    const { searchParams } = new URL(request.url);
+    const includeExcluded = searchParams.get('includeExcluded') === 'true';
 
     // 從 Beds24 獲取物業列表
     const { data, error, response } = await beds24Client.GET('/properties', {
@@ -36,16 +41,22 @@ export async function GET(request: Request) {
     }
 
     // 格式化物業列表
-    const formattedProperties = (data?.data || []).map((property: any) => ({
+    let properties = (data?.data || []).map((property: any) => ({
       id: property.id,
       name: property.name || `Property ${property.id}`,
       address: property.address || '',
       city: property.city || '',
     }));
+    
+    // Admin API 預設也過濾（除非明確要求包含）
+    if (!includeExcluded) {
+      properties = filterProperties(properties);
+      console.log(`🔍 [Admin Properties] 過濾後剩餘 ${properties.length} 個物業`);
+    }
 
     return NextResponse.json({
       success: true,
-      data: formattedProperties,
+      data: properties,
     });
   } catch (error) {
     console.error('[Admin Properties] 獲取物業列表失敗:', error);

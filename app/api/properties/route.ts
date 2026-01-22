@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
 import type { HotelProperty, ApiResponse } from '@/lib/types/hotel';
+import { filterProperties, filterPropertyRooms, logFilterConfig } from '@/lib/filters/room-filter';
 
 export const dynamic = 'force-dynamic'; // 不快取，始終獲取最新資料
 
@@ -34,8 +35,20 @@ export async function GET() {
       );
     }
 
+    // 記錄過濾配置（調試用）
+    logFilterConfig();
+
+    // 過濾物業和房間
+    const rawProperties = data?.data || [];
+    console.log(`📦 從 Beds24 獲取 ${rawProperties.length} 個物業`);
+    
+    const filteredByProperty = filterProperties(rawProperties);
+    const filteredWithRooms = filterPropertyRooms(filteredByProperty);
+    
+    console.log(`✅ 過濾後剩餘 ${filteredWithRooms.length} 個物業`);
+
     // 只提取前端需要的資料欄位
-    const properties: HotelProperty[] = (data?.data || []).map((property) => ({
+    const properties: HotelProperty[] = filteredWithRooms.map((property) => ({
       id: property.id!,
       name: property.name || '未命名飯店',
       address: property.address,

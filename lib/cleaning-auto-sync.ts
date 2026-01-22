@@ -8,6 +8,7 @@ import { prisma } from './prisma';
 import { beds24Client, getBeds24Headers } from './beds24-client';
 import type { CleaningTeam, CleaningUrgency } from './generated/prisma';
 import { getTodayInTokyo, formatDateInTokyo, dateToUTC } from './timezone-utils';
+import { shouldExcludeRoom, logFilterConfig } from './filters/room-filter';
 
 interface SyncStats {
   created: number;
@@ -31,6 +32,9 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
   };
 
   console.log('🔄 開始同步清掃任務...');
+  
+  // 記錄過濾配置
+  logFilterConfig();
 
   try {
     const headers = await getBeds24Headers();
@@ -133,6 +137,7 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
       noPropertyId: 0,
       noRoomId: 0,
       noBookingId: 0,
+      excluded: 0,
     };
 
     for (const booking of allBookings) {
@@ -169,6 +174,14 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
         const beds24BookingId = booking.id;
         const propertyId = booking.propertyId;
         const roomId = booking.roomId;
+        
+        // 檢查是否在排除清單中
+        if (shouldExcludeRoom(roomId, propertyId)) {
+          console.log(`⏭️  跳過訂單 ${beds24BookingId}（房間 ${roomId} 已排除）`);
+          skipReasons.excluded++;
+          skippedCount++;
+          continue;
+        }
         
         // 將 Beds24 日期轉換為 UTC 午夜（資料庫存儲格式）
         const checkOutDate = dateToUTC(booking.departure);
@@ -275,6 +288,7 @@ export async function syncCleaningTasksFromBeds24(): Promise<SyncStats> {
       if (skipReasons.noDeparture > 0) console.log(`     • 無退房日期: ${skipReasons.noDeparture} 筆`);
       if (skipReasons.noPropertyId > 0) console.log(`     • 無物業ID: ${skipReasons.noPropertyId} 筆`);
       if (skipReasons.noRoomId > 0) console.log(`     • 無房間ID: ${skipReasons.noRoomId} 筆`);
+      if (skipReasons.excluded > 0) console.log(`     • 已排除（過濾器）: ${skipReasons.excluded} 筆`);
     }
     console.log(`   - 新增任務: ${stats.created} 個`);
     console.log(`   - 更新任務: ${stats.updated} 個`);

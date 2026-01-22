@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
 import type { RoomAvailability, ApiResponse } from '@/lib/types/hotel';
+import { shouldExcludeRoom } from '@/lib/filters/room-filter';
 
 export const dynamic = 'force-dynamic'; // 不快取，始終獲取最新資料
 
@@ -128,18 +129,28 @@ export async function GET(request: Request) {
       }
     }
 
-    // 整合空房和價格資料
-    const availability: RoomAvailability[] = (availabilityResult.data?.data || []).map((item) => {
-      const roomPriceData = priceMap.get(item.roomId!);
-      return {
-        roomId: item.roomId!,
-        propertyId: item.propertyId!,
-        name: item.name || '未命名房型',
-        availability: item.availability || {},
-        prices: roomPriceData?.prices,
-        currency: roomPriceData?.currency,
-      };
-    });
+    // 整合空房和價格資料，並過濾排除的房間
+    const availability: RoomAvailability[] = (availabilityResult.data?.data || [])
+      .filter((item) => {
+        // 過濾排除的房間
+        if (item.roomId && item.propertyId) {
+          return !shouldExcludeRoom(item.roomId, item.propertyId);
+        }
+        return true;
+      })
+      .map((item) => {
+        const roomPriceData = priceMap.get(item.roomId!);
+        return {
+          roomId: item.roomId!,
+          propertyId: item.propertyId!,
+          name: item.name || '未命名房型',
+          availability: item.availability || {},
+          prices: roomPriceData?.prices,
+          currency: roomPriceData?.currency,
+        };
+      });
+
+    console.log(`✅ 返回 ${availability.length} 個可用房間（已過濾）`);
 
     return NextResponse.json<ApiResponse<RoomAvailability[]>>({
       success: true,

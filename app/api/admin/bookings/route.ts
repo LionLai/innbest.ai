@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { beds24Client, getBeds24Headers } from '@/lib/beds24-client';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth, handleAuthError } from '@/lib/api-auth';
+import { filterBookings, logFilterConfig } from '@/lib/filters/room-filter';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,11 +77,18 @@ export async function GET(request: Request) {
     }
 
     // 處理返回數據
-    const beds24Bookings = data?.data || [];
-    const total = data?.count || beds24Bookings.length;
+    logFilterConfig();
+    
+    const rawBookings = data?.data || [];
+    console.log(`📦 從 Beds24 獲取 ${rawBookings.length} 筆訂房`);
+    
+    // 應用過濾器
+    const beds24Bookings = filterBookings(rawBookings);
+    
+    const total = beds24Bookings.length; // 使用過濾後的數量
     const totalPages = Math.ceil(total / pageSize);
 
-    console.log(`✅ 成功獲取 ${beds24Bookings.length} 筆 Beds24 訂房`);
+    console.log(`✅ 過濾後剩餘 ${beds24Bookings.length} 筆訂房`);
 
     // 獲取本地訂房資料用於對應
     console.log('🔍 查詢本地訂房資料...');
