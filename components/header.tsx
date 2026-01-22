@@ -6,14 +6,13 @@ import { useLanguage } from "@/contexts/language-context"
 import { Menu } from 'lucide-react'
 import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import Link from "next/link"
 
 export function Header() {
   const { t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/90">
       <div className="container mx-auto px-6">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center gap-2">
@@ -37,12 +36,6 @@ export function Header() {
             <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
               {t.contact.title}
             </button>
-            <Link href="/hotels" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              飯店據點
-            </Link>
-            <Link href="/availability" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              查詢空房
-            </Link>
           </nav>
 
           {/* Actions */}
@@ -61,16 +54,6 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/hotels" onClick={() => setIsOpen(false)}>
-                    <Button variant="ghost" className="justify-start w-full">
-                      飯店據點
-                    </Button>
-                  </Link>
-                  <Link href="/availability" onClick={() => setIsOpen(false)}>
-                    <Button variant="ghost" className="justify-start w-full">
-                      查詢空房
-                    </Button>
-                  </Link>
                   <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>
                     {t.powerStack.badge}
                   </Button>
