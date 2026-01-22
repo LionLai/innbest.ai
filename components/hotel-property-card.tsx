@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Eye, ChevronDown, ChevronUp } from "lucide-react";
 import type { HotelProperty } from "@/lib/types/hotel";
 import { 
   getPropertyPrimaryImage, 
@@ -20,6 +21,7 @@ interface HotelPropertyCardProps {
 
 export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
   const router = useRouter();
+  const [isExpanded, setIsExpanded] = useState(false);
   const propertyImage = getPropertyPrimaryImage(property.id);
 
   return (
@@ -82,12 +84,41 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
       )}
       <CardContent className="p-6">
         <div className="space-y-4">
-          <div>
-            <h4 className="font-semibold mb-4 text-base">
-              房型選擇 ({property.roomTypes.length})
-            </h4>
-            {/* Grid 布局 - 塊狀卡片 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* 摺疊/展開控制區域 */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h4 className="font-semibold text-base">
+                房型選擇
+              </h4>
+              <Badge variant="secondary" className="font-normal">
+                {property.roomTypes.length} 種房型
+              </Badge>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="gap-2"
+            >
+              {isExpanded ? (
+                <>
+                  收起房型
+                  <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  展開查看房型
+                  <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* 房型列表 - 條件渲染 */}
+          {isExpanded && (
+            <div>
+              {/* Grid 布局 - 塊狀卡片 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {property.roomTypes.length > 0 ? (
                 property.roomTypes.map((room) => {
                   const roomImage = getRoomPrimaryImage(property.id, room.id);
@@ -186,8 +217,9 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
                   此飯店目前沒有可預訂的房型
                 </div>
               )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>
