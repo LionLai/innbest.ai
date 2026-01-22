@@ -7,7 +7,15 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Eye, ChevronDown, ChevronUp, MapPin, ExternalLink } from "lucide-react";
 import type { HotelProperty } from "@/lib/types/hotel";
 import { 
   getPropertyPrimaryImage, 
@@ -22,7 +30,18 @@ interface HotelPropertyCardProps {
 export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const propertyImage = getPropertyPrimaryImage(property.id);
+
+  // 格式化完整地址
+  const fullAddress = [property.address, property.city, property.country]
+    .filter(Boolean)
+    .join(', ');
+
+  // 生成 Google Maps URL
+  const googleMapsUrl = fullAddress 
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
+    : null;
 
   return (
     <Card className="hover:shadow-lg transition-shadow overflow-hidden">
@@ -43,10 +62,14 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <h2 className="text-3xl font-bold mb-2">{property.name}</h2>
             <div className="flex flex-wrap items-center gap-2">
-              {(property.city || property.address || property.country) && (
-                <span className="flex items-center gap-1 text-white/90">
-                  📍 {[property.address, property.city, property.country].filter(Boolean).join(', ')}
-                </span>
+              {fullAddress && googleMapsUrl && (
+                <button
+                  onClick={() => setIsMapOpen(true)}
+                  className="flex items-center gap-1 text-white/90 hover:text-white hover:underline transition-all cursor-pointer group"
+                >
+                  <MapPin className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  {fullAddress}
+                </button>
               )}
               {property.propertyType && (
                 <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
@@ -66,10 +89,14 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
               <CardTitle className="text-2xl">{property.name}</CardTitle>
               <CardDescription className="mt-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  {(property.city || property.address || property.country) && (
-                    <span className="flex items-center gap-1">
-                      📍 {[property.address, property.city, property.country].filter(Boolean).join(', ')}
-                    </span>
+                  {fullAddress && googleMapsUrl && (
+                    <button
+                      onClick={() => setIsMapOpen(true)}
+                      className="flex items-center gap-1 text-foreground/70 hover:text-foreground hover:underline transition-all cursor-pointer group"
+                    >
+                      <MapPin className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      {fullAddress}
+                    </button>
                   )}
                   {property.propertyType && (
                     <Badge variant="outline">
@@ -222,6 +249,50 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
           )}
         </div>
       </CardContent>
+
+      {/* 地圖 Modal */}
+      <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
+        <DialogContent className="max-w-4xl w-full h-[80vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <MapPin className="h-5 w-5 text-primary" />
+              {property.name}
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              {fullAddress}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {/* Google Maps iframe */}
+          <div className="flex-1 w-full px-6 pb-4">
+            {googleMapsUrl && (
+              <iframe
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=m&z=15&output=embed&iwloc=near`}
+                width="100%"
+                height="100%"
+                style={{ border: 0, borderRadius: '8px' }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title={`${property.name} 地圖`}
+              />
+            )}
+          </div>
+          
+          <DialogFooter className="p-6 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => googleMapsUrl && window.open(googleMapsUrl, '_blank')}
+              className="gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              在 Google Maps 中開啟
+            </Button>
+            <Button onClick={() => setIsMapOpen(false)}>
+              關閉
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
