@@ -2,55 +2,41 @@
 
 import { Button } from "@/components/ui/button"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useLanguage } from "@/contexts/language-context"
 import { Menu } from 'lucide-react'
 import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Link from "next/link"
 
 export function Header() {
-  const { t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/90">
       <div className="container mx-auto px-6">
         <div className="flex h-20 items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="text-2xl font-serif font-bold tracking-tight">
               <span className="text-foreground">innbest</span>
               <span className="text-accent">.ai</span>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              {t.powerStack.badge}
-            </button>
-            <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              {t.performance.badge}
-            </button>
-            <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              {t.aiPms.badge}
-            </button>
-            <button className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
-              {t.contact.title}
-            </button>
-            <Link href="/hotels" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
+            <Link href="/" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
               飯店據點
             </Link>
             <Link href="/availability" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
               查詢空房
+            </Link>
+            <Link href="/contact" className="text-sm text-foreground/80 hover:text-accent transition-colors font-medium">
+              聯絡我們
             </Link>
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <Button className="hidden md:inline-flex bg-accent hover:bg-accent/90 text-accent-foreground">
-              {t.hero.bookCall}
-            </Button>
 
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -61,7 +47,7 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/hotels" onClick={() => setIsOpen(false)}>
+                  <Link href="/" onClick={() => setIsOpen(false)}>
                     <Button variant="ghost" className="justify-start w-full">
                       飯店據點
                     </Button>
@@ -71,21 +57,11 @@ export function Header() {
                       查詢空房
                     </Button>
                   </Link>
-                  <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>
-                    {t.powerStack.badge}
-                  </Button>
-                  <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>
-                    {t.performance.badge}
-                  </Button>
-                  <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>
-                    {t.aiPms.badge}
-                  </Button>
-                  <Button variant="ghost" className="justify-start" onClick={() => setIsOpen(false)}>
-                    {t.contact.title}
-                  </Button>
-                  <Button className="mt-4 bg-accent hover:bg-accent/90" onClick={() => setIsOpen(false)}>
-                    {t.hero.bookCall}
-                  </Button>
+                  <Link href="/contact" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="justify-start w-full">
+                      聯絡我們
+                    </Button>
+                  </Link>
                 </nav>
               </SheetContent>
             </Sheet>

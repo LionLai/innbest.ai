@@ -160,24 +160,24 @@ export const translations = {
     // Contact & Legal Section
     contact: {
       title: "聯絡我們",
-      subtitle: "我們期待與您討論投資機會",
+      subtitle: "如有任何訂房問題或需求，歡迎與我們聯繫",
       form: {
         name: "姓名",
         email: "電子郵件",
-        company: "公司名稱",
+        company: "公司名稱（選填）",
         message: "訊息",
         send: "送出",
         sending: "傳送中...",
       },
       info: {
         title: "聯絡資訊",
-        email: "investors@innbest.ai",
+        email: "booking@innbest.ai",
         phone: "+81-3-XXXX-XXXX",
         address: "東京都港區 XXX",
       },
       legal: {
-        title: "法律聲明",
-        disclaimer: "本網站內容僅供參考,不構成投資建議。投資有風險,過往表現不代表未來結果。",
+        title: "服務條款",
+        disclaimer: "本網站提供的飯店資訊僅供參考，實際房價與空房狀況請以即時查詢為準。訂房需遵守各飯店的相關條款與規定。",
         privacy: "隱私權政策",
         terms: "使用條款",
       },
@@ -340,25 +340,25 @@ export const translations = {
     // Contact & Legal Section
     contact: {
       title: "Contact Us",
-      subtitle: "We look forward to discussing investment opportunities",
+      subtitle: "Please feel free to contact us for any booking inquiries or assistance",
       form: {
         name: "Name",
         email: "Email",
-        company: "Company",
+        company: "Company (Optional)",
         message: "Message",
         send: "Send",
         sending: "Sending...",
       },
       info: {
         title: "Contact Information",
-        email: "investors@innbest.ai",
+        email: "booking@innbest.ai",
         phone: "+81-3-XXXX-XXXX",
         address: "Minato-ku, Tokyo, Japan",
       },
       legal: {
-        title: "Legal Disclaimer",
+        title: "Terms of Service",
         disclaimer:
-          "Content is for reference only and does not constitute investment advice. Investments carry risks; past performance does not guarantee future results.",
+          "Hotel information provided on this website is for reference only. Actual room rates and availability are subject to real-time inquiry. Bookings are subject to each hotel's terms and conditions.",
         privacy: "Privacy Policy",
         terms: "Terms of Service",
       },
@@ -518,25 +518,25 @@ export const translations = {
     // Contact & Legal Section
     contact: {
       title: "お問い合わせ",
-      subtitle: "投資機会についてご相談させていただきます",
+      subtitle: "ご予約に関するご質問やご要望がございましたら、お気軽にお問い合わせください",
       form: {
         name: "名前",
         email: "メールアドレス",
-        company: "会社名",
+        company: "会社名（任意）",
         message: "メッセージ",
         send: "送信",
         sending: "送信中...",
       },
       info: {
         title: "連絡先情報",
-        email: "investors@innbest.ai",
+        email: "booking@innbest.ai",
         phone: "+81-3-XXXX-XXXX",
         address: "東京都港区 XXX",
       },
       legal: {
-        title: "法的免責事項",
+        title: "利用規約",
         disclaimer:
-          "本ウェブサイトの内容は参考用であり、投資助言を構成するものではありません。投資にはリスクが伴い、過去の実績は将来の結果を保証するものではありません。",
+          "本ウェブサイトに掲載されているホテル情報は参考用です。実際の料金と空室状況はリアルタイムでご確認ください。ご予約は各ホテルの規約に従います。",
         privacy: "プライバシーポリシー",
         terms: "利用規約",
       },
