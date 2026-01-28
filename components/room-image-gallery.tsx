@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import type { ImageInfo } from "@/lib/images-config";
@@ -116,16 +116,6 @@ export function RoomImageGallery({ images, roomName }: RoomImageGalleryProps) {
               fill
               className="object-contain"
             />
-            
-            {/* 關閉按鈕 */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-4 right-4 rounded-full bg-white/90 hover:bg-white"
-              onClick={() => setIsFullscreen(false)}
-            >
-              <X className="h-6 w-6" />
-            </Button>
 
             {/* 導航按鈕 */}
             {images.length > 1 && (
