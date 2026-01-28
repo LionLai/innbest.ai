@@ -117,13 +117,13 @@ async function fetchBeds24Properties() {
 }
 
 /**
- * 掃描目錄並返回所有圖片文件
+ * 掃描目錄並返回所有圖片文件（僅 webp 格式）
  */
 function getImageFiles(dir) {
   try {
     const files = fs.readdirSync(dir);
     return files
-      .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
+      .filter(file => /\.webp$/i.test(file))
       .sort((a, b) => {
         // 按數字排序
         const numA = parseInt(a.match(/\d+/)?.[0] || '0');

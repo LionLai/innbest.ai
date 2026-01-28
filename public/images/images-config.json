@@ -5,52 +5,28 @@
       "name": "GLOU 東新宿",
       "images": [
         {
-          "path": "/images/97259/1.jpg",
+          "path": "/images/97259/1.webp",
           "alt": "GLOU 東新宿外觀",
           "isPrimary": true,
           "order": 0
         },
         {
-          "path": "/images/97259/1.webp",
+          "path": "/images/97259/2.webp",
           "alt": "GLOU 東新宿 建築外觀 1",
           "isPrimary": false,
           "order": 1
         },
         {
-          "path": "/images/97259/2.jpg",
+          "path": "/images/97259/3.webp",
           "alt": "GLOU 東新宿 建築外觀 2",
           "isPrimary": false,
           "order": 2
         },
         {
-          "path": "/images/97259/2.webp",
+          "path": "/images/97259/4.webp",
           "alt": "GLOU 東新宿 建築外觀 3",
           "isPrimary": false,
           "order": 3
-        },
-        {
-          "path": "/images/97259/3.jpg",
-          "alt": "GLOU 東新宿 建築外觀 4",
-          "isPrimary": false,
-          "order": 4
-        },
-        {
-          "path": "/images/97259/3.webp",
-          "alt": "GLOU 東新宿 建築外觀 5",
-          "isPrimary": false,
-          "order": 5
-        },
-        {
-          "path": "/images/97259/4.jpg",
-          "alt": "GLOU 東新宿 建築外觀 6",
-          "isPrimary": false,
-          "order": 6
-        },
-        {
-          "path": "/images/97259/4.webp",
-          "alt": "GLOU 東新宿 建築外觀 7",
-          "isPrimary": false,
-          "order": 7
         }
       ],
       "rooms": {
@@ -59,28 +35,16 @@
           "name": "スモール",
           "images": [
             {
-              "path": "/images/97259/221799/1.jpg",
+              "path": "/images/97259/221799/1.webp",
               "alt": "スモール - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221799/1.webp",
+              "path": "/images/97259/221799/2.webp",
               "alt": "スモール - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221799/2.jpg",
-              "alt": "スモール - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221799/2.webp",
-              "alt": "スモール - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -89,124 +53,64 @@
           "name": "スタンダード",
           "images": [
             {
-              "path": "/images/97259/221800/1.jpg",
+              "path": "/images/97259/221800/1.webp",
               "alt": "スタンダード - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221800/1.webp",
+              "path": "/images/97259/221800/2.webp",
               "alt": "スタンダード - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221800/2.jpg",
+              "path": "/images/97259/221800/3.webp",
               "alt": "スタンダード - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221800/2.webp",
+              "path": "/images/97259/221800/4.webp",
               "alt": "スタンダード - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221800/3.jpg",
+              "path": "/images/97259/221800/5.webp",
               "alt": "スタンダード - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221800/3.webp",
+              "path": "/images/97259/221800/6.webp",
               "alt": "スタンダード - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221800/4.jpg",
+              "path": "/images/97259/221800/7.webp",
               "alt": "スタンダード - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221800/4.webp",
+              "path": "/images/97259/221800/8.webp",
               "alt": "スタンダード - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221800/5.jpg",
+              "path": "/images/97259/221800/9.webp",
               "alt": "スタンダード - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221800/5.webp",
+              "path": "/images/97259/221800/10.webp",
               "alt": "スタンダード - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221800/6.jpg",
-              "alt": "スタンダード - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221800/6.webp",
-              "alt": "スタンダード - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221800/7.jpg",
-              "alt": "スタンダード - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221800/7.webp",
-              "alt": "スタンダード - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221800/8.jpg",
-              "alt": "スタンダード - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221800/8.webp",
-              "alt": "スタンダード - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221800/9.jpg",
-              "alt": "スタンダード - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221800/9.webp",
-              "alt": "スタンダード - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221800/10.jpg",
-              "alt": "スタンダード - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221800/10.webp",
-              "alt": "スタンダード - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -215,28 +119,16 @@
           "name": "205(スモール)",
           "images": [
             {
-              "path": "/images/97259/221801/1.jpg",
+              "path": "/images/97259/221801/1.webp",
               "alt": "205(スモール) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221801/1.webp",
+              "path": "/images/97259/221801/2.webp",
               "alt": "205(スモール) - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221801/2.jpg",
-              "alt": "205(スモール) - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221801/2.webp",
-              "alt": "205(スモール) - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -245,124 +137,64 @@
           "name": "2101(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221802/1.jpg",
+              "path": "/images/97259/221802/1.webp",
               "alt": "2101(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221802/1.webp",
+              "path": "/images/97259/221802/2.webp",
               "alt": "2101(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221802/2.jpg",
+              "path": "/images/97259/221802/3.webp",
               "alt": "2101(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221802/2.webp",
+              "path": "/images/97259/221802/4.webp",
               "alt": "2101(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221802/3.jpg",
+              "path": "/images/97259/221802/5.webp",
               "alt": "2101(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221802/3.webp",
+              "path": "/images/97259/221802/6.webp",
               "alt": "2101(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221802/4.jpg",
+              "path": "/images/97259/221802/7.webp",
               "alt": "2101(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221802/4.webp",
+              "path": "/images/97259/221802/8.webp",
               "alt": "2101(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221802/5.jpg",
+              "path": "/images/97259/221802/9.webp",
               "alt": "2101(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221802/5.webp",
+              "path": "/images/97259/221802/10.webp",
               "alt": "2101(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221802/6.jpg",
-              "alt": "2101(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221802/6.webp",
-              "alt": "2101(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221802/7.jpg",
-              "alt": "2101(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221802/7.webp",
-              "alt": "2101(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221802/8.jpg",
-              "alt": "2101(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221802/8.webp",
-              "alt": "2101(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221802/9.jpg",
-              "alt": "2101(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221802/9.webp",
-              "alt": "2101(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221802/10.jpg",
-              "alt": "2101(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221802/10.webp",
-              "alt": "2101(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -371,28 +203,16 @@
           "name": "202(スモール)",
           "images": [
             {
-              "path": "/images/97259/221803/1.jpg",
+              "path": "/images/97259/221803/1.webp",
               "alt": "202(スモール) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221803/1.webp",
+              "path": "/images/97259/221803/2.webp",
               "alt": "202(スモール) - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221803/2.jpg",
-              "alt": "202(スモール) - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221803/2.webp",
-              "alt": "202(スモール) - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -401,124 +221,64 @@
           "name": "2102(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221804/1.jpg",
+              "path": "/images/97259/221804/1.webp",
               "alt": "2102(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221804/1.webp",
+              "path": "/images/97259/221804/2.webp",
               "alt": "2102(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221804/2.jpg",
+              "path": "/images/97259/221804/3.webp",
               "alt": "2102(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221804/2.webp",
+              "path": "/images/97259/221804/4.webp",
               "alt": "2102(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221804/3.jpg",
+              "path": "/images/97259/221804/5.webp",
               "alt": "2102(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221804/3.webp",
+              "path": "/images/97259/221804/6.webp",
               "alt": "2102(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221804/4.jpg",
+              "path": "/images/97259/221804/7.webp",
               "alt": "2102(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221804/4.webp",
+              "path": "/images/97259/221804/8.webp",
               "alt": "2102(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221804/5.jpg",
+              "path": "/images/97259/221804/9.webp",
               "alt": "2102(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221804/5.webp",
+              "path": "/images/97259/221804/10.webp",
               "alt": "2102(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221804/6.jpg",
-              "alt": "2102(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221804/6.webp",
-              "alt": "2102(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221804/7.jpg",
-              "alt": "2102(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221804/7.webp",
-              "alt": "2102(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221804/8.jpg",
-              "alt": "2102(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221804/8.webp",
-              "alt": "2102(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221804/9.jpg",
-              "alt": "2102(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221804/9.webp",
-              "alt": "2102(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221804/10.jpg",
-              "alt": "2102(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221804/10.webp",
-              "alt": "2102(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -527,124 +287,64 @@
           "name": "2103(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221805/1.jpg",
+              "path": "/images/97259/221805/1.webp",
               "alt": "2103(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221805/1.webp",
+              "path": "/images/97259/221805/2.webp",
               "alt": "2103(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221805/2.jpg",
+              "path": "/images/97259/221805/3.webp",
               "alt": "2103(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221805/2.webp",
+              "path": "/images/97259/221805/4.webp",
               "alt": "2103(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221805/3.jpg",
+              "path": "/images/97259/221805/5.webp",
               "alt": "2103(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221805/3.webp",
+              "path": "/images/97259/221805/6.webp",
               "alt": "2103(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221805/4.jpg",
+              "path": "/images/97259/221805/7.webp",
               "alt": "2103(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221805/4.webp",
+              "path": "/images/97259/221805/8.webp",
               "alt": "2103(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221805/5.jpg",
+              "path": "/images/97259/221805/9.webp",
               "alt": "2103(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221805/5.webp",
+              "path": "/images/97259/221805/10.webp",
               "alt": "2103(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221805/6.jpg",
-              "alt": "2103(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221805/6.webp",
-              "alt": "2103(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221805/7.jpg",
-              "alt": "2103(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221805/7.webp",
-              "alt": "2103(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221805/8.jpg",
-              "alt": "2103(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221805/8.webp",
-              "alt": "2103(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221805/9.jpg",
-              "alt": "2103(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221805/9.webp",
-              "alt": "2103(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221805/10.jpg",
-              "alt": "2103(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221805/10.webp",
-              "alt": "2103(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -653,124 +353,64 @@
           "name": "2201(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221806/1.jpg",
+              "path": "/images/97259/221806/1.webp",
               "alt": "2201(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221806/1.webp",
+              "path": "/images/97259/221806/2.webp",
               "alt": "2201(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221806/2.jpg",
+              "path": "/images/97259/221806/3.webp",
               "alt": "2201(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221806/2.webp",
+              "path": "/images/97259/221806/4.webp",
               "alt": "2201(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221806/3.jpg",
+              "path": "/images/97259/221806/5.webp",
               "alt": "2201(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221806/3.webp",
+              "path": "/images/97259/221806/6.webp",
               "alt": "2201(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221806/4.jpg",
+              "path": "/images/97259/221806/7.webp",
               "alt": "2201(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221806/4.webp",
+              "path": "/images/97259/221806/8.webp",
               "alt": "2201(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221806/5.jpg",
+              "path": "/images/97259/221806/9.webp",
               "alt": "2201(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221806/5.webp",
+              "path": "/images/97259/221806/10.webp",
               "alt": "2201(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221806/6.jpg",
-              "alt": "2201(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221806/6.webp",
-              "alt": "2201(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221806/7.jpg",
-              "alt": "2201(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221806/7.webp",
-              "alt": "2201(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221806/8.jpg",
-              "alt": "2201(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221806/8.webp",
-              "alt": "2201(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221806/9.jpg",
-              "alt": "2201(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221806/9.webp",
-              "alt": "2201(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221806/10.jpg",
-              "alt": "2201(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221806/10.webp",
-              "alt": "2201(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -779,124 +419,64 @@
           "name": "2202(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221807/1.jpg",
+              "path": "/images/97259/221807/1.webp",
               "alt": "2202(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221807/1.webp",
+              "path": "/images/97259/221807/2.webp",
               "alt": "2202(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221807/2.jpg",
+              "path": "/images/97259/221807/3.webp",
               "alt": "2202(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221807/2.webp",
+              "path": "/images/97259/221807/4.webp",
               "alt": "2202(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221807/3.jpg",
+              "path": "/images/97259/221807/5.webp",
               "alt": "2202(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221807/3.webp",
+              "path": "/images/97259/221807/6.webp",
               "alt": "2202(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221807/4.jpg",
+              "path": "/images/97259/221807/7.webp",
               "alt": "2202(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221807/4.webp",
+              "path": "/images/97259/221807/8.webp",
               "alt": "2202(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221807/5.jpg",
+              "path": "/images/97259/221807/9.webp",
               "alt": "2202(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221807/5.webp",
+              "path": "/images/97259/221807/10.webp",
               "alt": "2202(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221807/6.jpg",
-              "alt": "2202(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221807/6.webp",
-              "alt": "2202(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221807/7.jpg",
-              "alt": "2202(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221807/7.webp",
-              "alt": "2202(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221807/8.jpg",
-              "alt": "2202(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221807/8.webp",
-              "alt": "2202(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221807/9.jpg",
-              "alt": "2202(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221807/9.webp",
-              "alt": "2202(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221807/10.jpg",
-              "alt": "2202(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221807/10.webp",
-              "alt": "2202(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -905,124 +485,64 @@
           "name": "2203(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221808/1.jpg",
+              "path": "/images/97259/221808/1.webp",
               "alt": "2203(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221808/1.webp",
+              "path": "/images/97259/221808/2.webp",
               "alt": "2203(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221808/2.jpg",
+              "path": "/images/97259/221808/3.webp",
               "alt": "2203(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221808/2.webp",
+              "path": "/images/97259/221808/4.webp",
               "alt": "2203(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221808/3.jpg",
+              "path": "/images/97259/221808/5.webp",
               "alt": "2203(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221808/3.webp",
+              "path": "/images/97259/221808/6.webp",
               "alt": "2203(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221808/4.jpg",
+              "path": "/images/97259/221808/7.webp",
               "alt": "2203(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221808/4.webp",
+              "path": "/images/97259/221808/8.webp",
               "alt": "2203(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221808/5.jpg",
+              "path": "/images/97259/221808/9.webp",
               "alt": "2203(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221808/5.webp",
+              "path": "/images/97259/221808/10.webp",
               "alt": "2203(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221808/6.jpg",
-              "alt": "2203(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221808/6.webp",
-              "alt": "2203(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221808/7.jpg",
-              "alt": "2203(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221808/7.webp",
-              "alt": "2203(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221808/8.jpg",
-              "alt": "2203(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221808/8.webp",
-              "alt": "2203(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221808/9.jpg",
-              "alt": "2203(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221808/9.webp",
-              "alt": "2203(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221808/10.jpg",
-              "alt": "2203(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221808/10.webp",
-              "alt": "2203(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -1031,124 +551,64 @@
           "name": "2301(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221809/1.jpg",
+              "path": "/images/97259/221809/1.webp",
               "alt": "2301(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221809/1.webp",
+              "path": "/images/97259/221809/2.webp",
               "alt": "2301(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221809/2.jpg",
+              "path": "/images/97259/221809/3.webp",
               "alt": "2301(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221809/2.webp",
+              "path": "/images/97259/221809/4.webp",
               "alt": "2301(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221809/3.jpg",
+              "path": "/images/97259/221809/5.webp",
               "alt": "2301(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221809/3.webp",
+              "path": "/images/97259/221809/6.webp",
               "alt": "2301(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221809/4.jpg",
+              "path": "/images/97259/221809/7.webp",
               "alt": "2301(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221809/4.webp",
+              "path": "/images/97259/221809/8.webp",
               "alt": "2301(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221809/5.jpg",
+              "path": "/images/97259/221809/9.webp",
               "alt": "2301(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221809/5.webp",
+              "path": "/images/97259/221809/10.webp",
               "alt": "2301(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221809/6.jpg",
-              "alt": "2301(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221809/6.webp",
-              "alt": "2301(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221809/7.jpg",
-              "alt": "2301(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221809/7.webp",
-              "alt": "2301(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221809/8.jpg",
-              "alt": "2301(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221809/8.webp",
-              "alt": "2301(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221809/9.jpg",
-              "alt": "2301(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221809/9.webp",
-              "alt": "2301(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221809/10.jpg",
-              "alt": "2301(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221809/10.webp",
-              "alt": "2301(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -1157,28 +617,16 @@
           "name": "204(スモール)",
           "images": [
             {
-              "path": "/images/97259/221810/1.jpg",
+              "path": "/images/97259/221810/1.webp",
               "alt": "204(スモール) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221810/1.webp",
+              "path": "/images/97259/221810/2.webp",
               "alt": "204(スモール) - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221810/2.jpg",
-              "alt": "204(スモール) - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221810/2.webp",
-              "alt": "204(スモール) - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -1187,124 +635,64 @@
           "name": "2302(スタンダード)",
           "images": [
             {
-              "path": "/images/97259/221811/1.jpg",
+              "path": "/images/97259/221811/1.webp",
               "alt": "2302(スタンダード) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221811/1.webp",
+              "path": "/images/97259/221811/2.webp",
               "alt": "2302(スタンダード) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/221811/2.jpg",
+              "path": "/images/97259/221811/3.webp",
               "alt": "2302(スタンダード) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/221811/2.webp",
+              "path": "/images/97259/221811/4.webp",
               "alt": "2302(スタンダード) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/221811/3.jpg",
+              "path": "/images/97259/221811/5.webp",
               "alt": "2302(スタンダード) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/221811/3.webp",
+              "path": "/images/97259/221811/6.webp",
               "alt": "2302(スタンダード) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/221811/4.jpg",
+              "path": "/images/97259/221811/7.webp",
               "alt": "2302(スタンダード) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/221811/4.webp",
+              "path": "/images/97259/221811/8.webp",
               "alt": "2302(スタンダード) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/221811/5.jpg",
+              "path": "/images/97259/221811/9.webp",
               "alt": "2302(スタンダード) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/221811/5.webp",
+              "path": "/images/97259/221811/10.webp",
               "alt": "2302(スタンダード) - 圖片 9",
               "isPrimary": false,
               "order": 9
-            },
-            {
-              "path": "/images/97259/221811/6.jpg",
-              "alt": "2302(スタンダード) - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/221811/6.webp",
-              "alt": "2302(スタンダード) - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/221811/7.jpg",
-              "alt": "2302(スタンダード) - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/221811/7.webp",
-              "alt": "2302(スタンダード) - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/221811/8.jpg",
-              "alt": "2302(スタンダード) - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/221811/8.webp",
-              "alt": "2302(スタンダード) - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/97259/221811/9.jpg",
-              "alt": "2302(スタンダード) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/221811/9.webp",
-              "alt": "2302(スタンダード) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/221811/10.jpg",
-              "alt": "2302(スタンダード) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/221811/10.webp",
-              "alt": "2302(スタンダード) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
             }
           ]
         },
@@ -1313,28 +701,16 @@
           "name": "303(スモール)",
           "images": [
             {
-              "path": "/images/97259/221812/1.jpg",
+              "path": "/images/97259/221812/1.webp",
               "alt": "303(スモール) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221812/1.webp",
+              "path": "/images/97259/221812/2.webp",
               "alt": "303(スモール) - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221812/2.jpg",
-              "alt": "303(スモール) - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221812/2.webp",
-              "alt": "303(スモール) - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -1343,28 +719,16 @@
           "name": "304(スモール)",
           "images": [
             {
-              "path": "/images/97259/221813/1.jpg",
+              "path": "/images/97259/221813/1.webp",
               "alt": "304(スモール) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221813/1.webp",
+              "path": "/images/97259/221813/2.webp",
               "alt": "304(スモール) - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221813/2.jpg",
-              "alt": "304(スモール) - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221813/2.webp",
-              "alt": "304(スモール) - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -1373,28 +737,16 @@
           "name": "305(スモール)",
           "images": [
             {
-              "path": "/images/97259/221814/1.jpg",
+              "path": "/images/97259/221814/1.webp",
               "alt": "305(スモール) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/221814/1.webp",
+              "path": "/images/97259/221814/2.webp",
               "alt": "305(スモール) - 圖片 1",
               "isPrimary": false,
               "order": 1
-            },
-            {
-              "path": "/images/97259/221814/2.jpg",
-              "alt": "305(スモール) - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/221814/2.webp",
-              "alt": "305(スモール) - 圖片 3",
-              "isPrimary": false,
-              "order": 3
             }
           ]
         },
@@ -1403,196 +755,100 @@
           "name": "102(エコノミー)",
           "images": [
             {
-              "path": "/images/97259/337010/1.jpg",
+              "path": "/images/97259/337010/1.webp",
               "alt": "102(エコノミー) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/337010/1.webp",
+              "path": "/images/97259/337010/2.webp",
               "alt": "102(エコノミー) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/337010/2.jpg",
+              "path": "/images/97259/337010/3.webp",
               "alt": "102(エコノミー) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/337010/2.webp",
+              "path": "/images/97259/337010/4.webp",
               "alt": "102(エコノミー) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/337010/3.jpg",
+              "path": "/images/97259/337010/5.webp",
               "alt": "102(エコノミー) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/337010/3.webp",
+              "path": "/images/97259/337010/6.webp",
               "alt": "102(エコノミー) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/337010/4.jpg",
+              "path": "/images/97259/337010/7.webp",
               "alt": "102(エコノミー) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/337010/4.webp",
+              "path": "/images/97259/337010/8.webp",
               "alt": "102(エコノミー) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/337010/5.jpg",
+              "path": "/images/97259/337010/9.webp",
               "alt": "102(エコノミー) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/337010/5.webp",
+              "path": "/images/97259/337010/10.webp",
               "alt": "102(エコノミー) - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/97259/337010/6.jpg",
+              "path": "/images/97259/337010/11.webp",
               "alt": "102(エコノミー) - 圖片 10",
               "isPrimary": false,
               "order": 10
             },
             {
-              "path": "/images/97259/337010/6.webp",
+              "path": "/images/97259/337010/12.webp",
               "alt": "102(エコノミー) - 圖片 11",
               "isPrimary": false,
               "order": 11
             },
             {
-              "path": "/images/97259/337010/7.jpg",
+              "path": "/images/97259/337010/13.webp",
               "alt": "102(エコノミー) - 圖片 12",
               "isPrimary": false,
               "order": 12
             },
             {
-              "path": "/images/97259/337010/7.webp",
+              "path": "/images/97259/337010/14.webp",
               "alt": "102(エコノミー) - 圖片 13",
               "isPrimary": false,
               "order": 13
             },
             {
-              "path": "/images/97259/337010/8.jpg",
+              "path": "/images/97259/337010/15.webp",
               "alt": "102(エコノミー) - 圖片 14",
               "isPrimary": false,
               "order": 14
             },
             {
-              "path": "/images/97259/337010/8.webp",
+              "path": "/images/97259/337010/16.webp",
               "alt": "102(エコノミー) - 圖片 15",
               "isPrimary": false,
               "order": 15
-            },
-            {
-              "path": "/images/97259/337010/9.jpg",
-              "alt": "102(エコノミー) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/337010/9.webp",
-              "alt": "102(エコノミー) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/337010/10.jpg",
-              "alt": "102(エコノミー) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/337010/10.webp",
-              "alt": "102(エコノミー) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/97259/337010/11.jpg",
-              "alt": "102(エコノミー) - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/97259/337010/11.webp",
-              "alt": "102(エコノミー) - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/97259/337010/12.jpg",
-              "alt": "102(エコノミー) - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/97259/337010/12.webp",
-              "alt": "102(エコノミー) - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/97259/337010/13.jpg",
-              "alt": "102(エコノミー) - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/97259/337010/13.webp",
-              "alt": "102(エコノミー) - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/97259/337010/14.jpg",
-              "alt": "102(エコノミー) - 圖片 26",
-              "isPrimary": false,
-              "order": 26
-            },
-            {
-              "path": "/images/97259/337010/14.webp",
-              "alt": "102(エコノミー) - 圖片 27",
-              "isPrimary": false,
-              "order": 27
-            },
-            {
-              "path": "/images/97259/337010/15.jpg",
-              "alt": "102(エコノミー) - 圖片 28",
-              "isPrimary": false,
-              "order": 28
-            },
-            {
-              "path": "/images/97259/337010/15.webp",
-              "alt": "102(エコノミー) - 圖片 29",
-              "isPrimary": false,
-              "order": 29
-            },
-            {
-              "path": "/images/97259/337010/16.jpg",
-              "alt": "102(エコノミー) - 圖片 30",
-              "isPrimary": false,
-              "order": 30
-            },
-            {
-              "path": "/images/97259/337010/16.webp",
-              "alt": "102(エコノミー) - 圖片 31",
-              "isPrimary": false,
-              "order": 31
             }
           ]
         },
@@ -1601,196 +857,100 @@
           "name": "Room 337011",
           "images": [
             {
-              "path": "/images/97259/337011/1.jpg",
+              "path": "/images/97259/337011/1.webp",
               "alt": "Room 337011 - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/337011/1.webp",
+              "path": "/images/97259/337011/2.webp",
               "alt": "Room 337011 - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/337011/2.jpg",
+              "path": "/images/97259/337011/3.webp",
               "alt": "Room 337011 - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/337011/2.webp",
+              "path": "/images/97259/337011/4.webp",
               "alt": "Room 337011 - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/337011/3.jpg",
+              "path": "/images/97259/337011/5.webp",
               "alt": "Room 337011 - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/337011/3.webp",
+              "path": "/images/97259/337011/6.webp",
               "alt": "Room 337011 - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/337011/4.jpg",
+              "path": "/images/97259/337011/7.webp",
               "alt": "Room 337011 - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/337011/4.webp",
+              "path": "/images/97259/337011/8.webp",
               "alt": "Room 337011 - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/337011/5.jpg",
+              "path": "/images/97259/337011/9.webp",
               "alt": "Room 337011 - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/337011/5.webp",
+              "path": "/images/97259/337011/10.webp",
               "alt": "Room 337011 - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/97259/337011/6.jpg",
+              "path": "/images/97259/337011/11.webp",
               "alt": "Room 337011 - 圖片 10",
               "isPrimary": false,
               "order": 10
             },
             {
-              "path": "/images/97259/337011/6.webp",
+              "path": "/images/97259/337011/12.webp",
               "alt": "Room 337011 - 圖片 11",
               "isPrimary": false,
               "order": 11
             },
             {
-              "path": "/images/97259/337011/7.jpg",
+              "path": "/images/97259/337011/13.webp",
               "alt": "Room 337011 - 圖片 12",
               "isPrimary": false,
               "order": 12
             },
             {
-              "path": "/images/97259/337011/7.webp",
+              "path": "/images/97259/337011/14.webp",
               "alt": "Room 337011 - 圖片 13",
               "isPrimary": false,
               "order": 13
             },
             {
-              "path": "/images/97259/337011/8.jpg",
+              "path": "/images/97259/337011/15.webp",
               "alt": "Room 337011 - 圖片 14",
               "isPrimary": false,
               "order": 14
             },
             {
-              "path": "/images/97259/337011/8.webp",
+              "path": "/images/97259/337011/16.webp",
               "alt": "Room 337011 - 圖片 15",
               "isPrimary": false,
               "order": 15
-            },
-            {
-              "path": "/images/97259/337011/9.jpg",
-              "alt": "Room 337011 - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/337011/9.webp",
-              "alt": "Room 337011 - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/337011/10.jpg",
-              "alt": "Room 337011 - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/337011/10.webp",
-              "alt": "Room 337011 - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/97259/337011/11.jpg",
-              "alt": "Room 337011 - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/97259/337011/11.webp",
-              "alt": "Room 337011 - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/97259/337011/12.jpg",
-              "alt": "Room 337011 - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/97259/337011/12.webp",
-              "alt": "Room 337011 - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/97259/337011/13.jpg",
-              "alt": "Room 337011 - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/97259/337011/13.webp",
-              "alt": "Room 337011 - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/97259/337011/14.jpg",
-              "alt": "Room 337011 - 圖片 26",
-              "isPrimary": false,
-              "order": 26
-            },
-            {
-              "path": "/images/97259/337011/14.webp",
-              "alt": "Room 337011 - 圖片 27",
-              "isPrimary": false,
-              "order": 27
-            },
-            {
-              "path": "/images/97259/337011/15.jpg",
-              "alt": "Room 337011 - 圖片 28",
-              "isPrimary": false,
-              "order": 28
-            },
-            {
-              "path": "/images/97259/337011/15.webp",
-              "alt": "Room 337011 - 圖片 29",
-              "isPrimary": false,
-              "order": 29
-            },
-            {
-              "path": "/images/97259/337011/16.jpg",
-              "alt": "Room 337011 - 圖片 30",
-              "isPrimary": false,
-              "order": 30
-            },
-            {
-              "path": "/images/97259/337011/16.webp",
-              "alt": "Room 337011 - 圖片 31",
-              "isPrimary": false,
-              "order": 31
             }
           ]
         },
@@ -1799,196 +959,100 @@
           "name": "307(エコノミー)",
           "images": [
             {
-              "path": "/images/97259/337012/1.jpg",
+              "path": "/images/97259/337012/1.webp",
               "alt": "307(エコノミー) - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/97259/337012/1.webp",
+              "path": "/images/97259/337012/2.webp",
               "alt": "307(エコノミー) - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/97259/337012/2.jpg",
+              "path": "/images/97259/337012/3.webp",
               "alt": "307(エコノミー) - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/97259/337012/2.webp",
+              "path": "/images/97259/337012/4.webp",
               "alt": "307(エコノミー) - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/97259/337012/3.jpg",
+              "path": "/images/97259/337012/5.webp",
               "alt": "307(エコノミー) - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/97259/337012/3.webp",
+              "path": "/images/97259/337012/6.webp",
               "alt": "307(エコノミー) - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/97259/337012/4.jpg",
+              "path": "/images/97259/337012/7.webp",
               "alt": "307(エコノミー) - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/97259/337012/4.webp",
+              "path": "/images/97259/337012/8.webp",
               "alt": "307(エコノミー) - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/97259/337012/5.jpg",
+              "path": "/images/97259/337012/9.webp",
               "alt": "307(エコノミー) - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/97259/337012/5.webp",
+              "path": "/images/97259/337012/10.webp",
               "alt": "307(エコノミー) - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/97259/337012/6.jpg",
+              "path": "/images/97259/337012/11.webp",
               "alt": "307(エコノミー) - 圖片 10",
               "isPrimary": false,
               "order": 10
             },
             {
-              "path": "/images/97259/337012/6.webp",
+              "path": "/images/97259/337012/12.webp",
               "alt": "307(エコノミー) - 圖片 11",
               "isPrimary": false,
               "order": 11
             },
             {
-              "path": "/images/97259/337012/7.jpg",
+              "path": "/images/97259/337012/13.webp",
               "alt": "307(エコノミー) - 圖片 12",
               "isPrimary": false,
               "order": 12
             },
             {
-              "path": "/images/97259/337012/7.webp",
+              "path": "/images/97259/337012/14.webp",
               "alt": "307(エコノミー) - 圖片 13",
               "isPrimary": false,
               "order": 13
             },
             {
-              "path": "/images/97259/337012/8.jpg",
+              "path": "/images/97259/337012/15.webp",
               "alt": "307(エコノミー) - 圖片 14",
               "isPrimary": false,
               "order": 14
             },
             {
-              "path": "/images/97259/337012/8.webp",
+              "path": "/images/97259/337012/16.webp",
               "alt": "307(エコノミー) - 圖片 15",
               "isPrimary": false,
               "order": 15
-            },
-            {
-              "path": "/images/97259/337012/9.jpg",
-              "alt": "307(エコノミー) - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/97259/337012/9.webp",
-              "alt": "307(エコノミー) - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/97259/337012/10.jpg",
-              "alt": "307(エコノミー) - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/97259/337012/10.webp",
-              "alt": "307(エコノミー) - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/97259/337012/11.jpg",
-              "alt": "307(エコノミー) - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/97259/337012/11.webp",
-              "alt": "307(エコノミー) - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/97259/337012/12.jpg",
-              "alt": "307(エコノミー) - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/97259/337012/12.webp",
-              "alt": "307(エコノミー) - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/97259/337012/13.jpg",
-              "alt": "307(エコノミー) - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/97259/337012/13.webp",
-              "alt": "307(エコノミー) - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/97259/337012/14.jpg",
-              "alt": "307(エコノミー) - 圖片 26",
-              "isPrimary": false,
-              "order": 26
-            },
-            {
-              "path": "/images/97259/337012/14.webp",
-              "alt": "307(エコノミー) - 圖片 27",
-              "isPrimary": false,
-              "order": 27
-            },
-            {
-              "path": "/images/97259/337012/15.jpg",
-              "alt": "307(エコノミー) - 圖片 28",
-              "isPrimary": false,
-              "order": 28
-            },
-            {
-              "path": "/images/97259/337012/15.webp",
-              "alt": "307(エコノミー) - 圖片 29",
-              "isPrimary": false,
-              "order": 29
-            },
-            {
-              "path": "/images/97259/337012/16.jpg",
-              "alt": "307(エコノミー) - 圖片 30",
-              "isPrimary": false,
-              "order": 30
-            },
-            {
-              "path": "/images/97259/337012/16.webp",
-              "alt": "307(エコノミー) - 圖片 31",
-              "isPrimary": false,
-              "order": 31
             }
           ]
         }
@@ -1999,28 +1063,16 @@
       "name": "Luce 池袋",
       "images": [
         {
-          "path": "/images/272758/1.jpg",
+          "path": "/images/272758/1.webp",
           "alt": "Luce 池袋外觀",
           "isPrimary": true,
           "order": 0
         },
         {
-          "path": "/images/272758/1.webp",
+          "path": "/images/272758/2.webp",
           "alt": "Luce 池袋 建築外觀 1",
           "isPrimary": false,
           "order": 1
-        },
-        {
-          "path": "/images/272758/2.jpg",
-          "alt": "Luce 池袋 建築外觀 2",
-          "isPrimary": false,
-          "order": 2
-        },
-        {
-          "path": "/images/272758/2.webp",
-          "alt": "Luce 池袋 建築外觀 3",
-          "isPrimary": false,
-          "order": 3
         }
       ],
       "rooms": {
@@ -2029,184 +1081,94 @@
           "name": "上池袋401",
           "images": [
             {
-              "path": "/images/272758/570479/0.jpg",
+              "path": "/images/272758/570479/0.webp",
               "alt": "上池袋401 - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/272758/570479/0.webp",
+              "path": "/images/272758/570479/1.webp",
               "alt": "上池袋401 - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/272758/570479/1.jpg",
+              "path": "/images/272758/570479/2.webp",
               "alt": "上池袋401 - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/272758/570479/1.webp",
+              "path": "/images/272758/570479/3.webp",
               "alt": "上池袋401 - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/272758/570479/2.jpg",
+              "path": "/images/272758/570479/4.webp",
               "alt": "上池袋401 - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/272758/570479/2.webp",
+              "path": "/images/272758/570479/5.webp",
               "alt": "上池袋401 - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/272758/570479/3.jpg",
+              "path": "/images/272758/570479/6.webp",
               "alt": "上池袋401 - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/272758/570479/3.webp",
+              "path": "/images/272758/570479/7.webp",
               "alt": "上池袋401 - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/272758/570479/4.jpg",
+              "path": "/images/272758/570479/8.webp",
               "alt": "上池袋401 - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/272758/570479/4.webp",
+              "path": "/images/272758/570479/9.webp",
               "alt": "上池袋401 - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/272758/570479/5.jpg",
+              "path": "/images/272758/570479/10.webp",
               "alt": "上池袋401 - 圖片 10",
               "isPrimary": false,
               "order": 10
             },
             {
-              "path": "/images/272758/570479/5.webp",
+              "path": "/images/272758/570479/11.webp",
               "alt": "上池袋401 - 圖片 11",
               "isPrimary": false,
               "order": 11
             },
             {
-              "path": "/images/272758/570479/6.jpg",
+              "path": "/images/272758/570479/12.webp",
               "alt": "上池袋401 - 圖片 12",
               "isPrimary": false,
               "order": 12
             },
             {
-              "path": "/images/272758/570479/6.webp",
+              "path": "/images/272758/570479/13.webp",
               "alt": "上池袋401 - 圖片 13",
               "isPrimary": false,
               "order": 13
             },
             {
-              "path": "/images/272758/570479/7.jpg",
+              "path": "/images/272758/570479/14.webp",
               "alt": "上池袋401 - 圖片 14",
               "isPrimary": false,
               "order": 14
-            },
-            {
-              "path": "/images/272758/570479/7.webp",
-              "alt": "上池袋401 - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/272758/570479/8.jpg",
-              "alt": "上池袋401 - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/272758/570479/8.webp",
-              "alt": "上池袋401 - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/272758/570479/9.jpg",
-              "alt": "上池袋401 - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/272758/570479/9.webp",
-              "alt": "上池袋401 - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/272758/570479/10.jpg",
-              "alt": "上池袋401 - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/272758/570479/10.webp",
-              "alt": "上池袋401 - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/272758/570479/11.jpg",
-              "alt": "上池袋401 - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/272758/570479/11.webp",
-              "alt": "上池袋401 - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/272758/570479/12.jpg",
-              "alt": "上池袋401 - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/272758/570479/12.webp",
-              "alt": "上池袋401 - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/272758/570479/13.jpg",
-              "alt": "上池袋401 - 圖片 26",
-              "isPrimary": false,
-              "order": 26
-            },
-            {
-              "path": "/images/272758/570479/13.webp",
-              "alt": "上池袋401 - 圖片 27",
-              "isPrimary": false,
-              "order": 27
-            },
-            {
-              "path": "/images/272758/570479/14.jpg",
-              "alt": "上池袋401 - 圖片 28",
-              "isPrimary": false,
-              "order": 28
-            },
-            {
-              "path": "/images/272758/570479/14.webp",
-              "alt": "上池袋401 - 圖片 29",
-              "isPrimary": false,
-              "order": 29
             }
           ]
         },
@@ -2215,328 +1177,166 @@
           "name": "上池袋202",
           "images": [
             {
-              "path": "/images/272758/621929/0.jpg",
+              "path": "/images/272758/621929/0.webp",
               "alt": "上池袋202 - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/272758/621929/0.webp",
+              "path": "/images/272758/621929/1.webp",
               "alt": "上池袋202 - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/272758/621929/1.jpg",
+              "path": "/images/272758/621929/2.webp",
               "alt": "上池袋202 - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/272758/621929/1.webp",
+              "path": "/images/272758/621929/3.webp",
               "alt": "上池袋202 - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/272758/621929/2.jpg",
+              "path": "/images/272758/621929/4.webp",
               "alt": "上池袋202 - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/272758/621929/2.webp",
+              "path": "/images/272758/621929/5.webp",
               "alt": "上池袋202 - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/272758/621929/3.jpg",
+              "path": "/images/272758/621929/6.webp",
               "alt": "上池袋202 - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/272758/621929/3.webp",
+              "path": "/images/272758/621929/7.webp",
               "alt": "上池袋202 - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/272758/621929/4.jpg",
+              "path": "/images/272758/621929/8.webp",
               "alt": "上池袋202 - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/272758/621929/4.webp",
+              "path": "/images/272758/621929/9.webp",
               "alt": "上池袋202 - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/272758/621929/5.jpg",
+              "path": "/images/272758/621929/10.webp",
               "alt": "上池袋202 - 圖片 10",
               "isPrimary": false,
               "order": 10
             },
             {
-              "path": "/images/272758/621929/5.webp",
+              "path": "/images/272758/621929/11.webp",
               "alt": "上池袋202 - 圖片 11",
               "isPrimary": false,
               "order": 11
             },
             {
-              "path": "/images/272758/621929/6.jpg",
+              "path": "/images/272758/621929/12.webp",
               "alt": "上池袋202 - 圖片 12",
               "isPrimary": false,
               "order": 12
             },
             {
-              "path": "/images/272758/621929/6.webp",
+              "path": "/images/272758/621929/13.webp",
               "alt": "上池袋202 - 圖片 13",
               "isPrimary": false,
               "order": 13
             },
             {
-              "path": "/images/272758/621929/7.jpg",
+              "path": "/images/272758/621929/14.webp",
               "alt": "上池袋202 - 圖片 14",
               "isPrimary": false,
               "order": 14
             },
             {
-              "path": "/images/272758/621929/7.webp",
+              "path": "/images/272758/621929/15.webp",
               "alt": "上池袋202 - 圖片 15",
               "isPrimary": false,
               "order": 15
             },
             {
-              "path": "/images/272758/621929/8.jpg",
+              "path": "/images/272758/621929/16.webp",
               "alt": "上池袋202 - 圖片 16",
               "isPrimary": false,
               "order": 16
             },
             {
-              "path": "/images/272758/621929/8.webp",
+              "path": "/images/272758/621929/17.webp",
               "alt": "上池袋202 - 圖片 17",
               "isPrimary": false,
               "order": 17
             },
             {
-              "path": "/images/272758/621929/9.jpg",
+              "path": "/images/272758/621929/18.webp",
               "alt": "上池袋202 - 圖片 18",
               "isPrimary": false,
               "order": 18
             },
             {
-              "path": "/images/272758/621929/9.webp",
+              "path": "/images/272758/621929/19.webp",
               "alt": "上池袋202 - 圖片 19",
               "isPrimary": false,
               "order": 19
             },
             {
-              "path": "/images/272758/621929/10.jpg",
+              "path": "/images/272758/621929/20.webp",
               "alt": "上池袋202 - 圖片 20",
               "isPrimary": false,
               "order": 20
             },
             {
-              "path": "/images/272758/621929/10.webp",
+              "path": "/images/272758/621929/21.webp",
               "alt": "上池袋202 - 圖片 21",
               "isPrimary": false,
               "order": 21
             },
             {
-              "path": "/images/272758/621929/11.jpg",
+              "path": "/images/272758/621929/22.webp",
               "alt": "上池袋202 - 圖片 22",
               "isPrimary": false,
               "order": 22
             },
             {
-              "path": "/images/272758/621929/11.webp",
+              "path": "/images/272758/621929/23.webp",
               "alt": "上池袋202 - 圖片 23",
               "isPrimary": false,
               "order": 23
             },
             {
-              "path": "/images/272758/621929/12.jpg",
+              "path": "/images/272758/621929/24.webp",
               "alt": "上池袋202 - 圖片 24",
               "isPrimary": false,
               "order": 24
             },
             {
-              "path": "/images/272758/621929/12.webp",
+              "path": "/images/272758/621929/25.webp",
               "alt": "上池袋202 - 圖片 25",
               "isPrimary": false,
               "order": 25
             },
             {
-              "path": "/images/272758/621929/13.jpg",
+              "path": "/images/272758/621929/26.webp",
               "alt": "上池袋202 - 圖片 26",
               "isPrimary": false,
               "order": 26
-            },
-            {
-              "path": "/images/272758/621929/13.webp",
-              "alt": "上池袋202 - 圖片 27",
-              "isPrimary": false,
-              "order": 27
-            },
-            {
-              "path": "/images/272758/621929/14.jpg",
-              "alt": "上池袋202 - 圖片 28",
-              "isPrimary": false,
-              "order": 28
-            },
-            {
-              "path": "/images/272758/621929/14.webp",
-              "alt": "上池袋202 - 圖片 29",
-              "isPrimary": false,
-              "order": 29
-            },
-            {
-              "path": "/images/272758/621929/15.jpg",
-              "alt": "上池袋202 - 圖片 30",
-              "isPrimary": false,
-              "order": 30
-            },
-            {
-              "path": "/images/272758/621929/15.webp",
-              "alt": "上池袋202 - 圖片 31",
-              "isPrimary": false,
-              "order": 31
-            },
-            {
-              "path": "/images/272758/621929/16.jpg",
-              "alt": "上池袋202 - 圖片 32",
-              "isPrimary": false,
-              "order": 32
-            },
-            {
-              "path": "/images/272758/621929/16.webp",
-              "alt": "上池袋202 - 圖片 33",
-              "isPrimary": false,
-              "order": 33
-            },
-            {
-              "path": "/images/272758/621929/17.jpg",
-              "alt": "上池袋202 - 圖片 34",
-              "isPrimary": false,
-              "order": 34
-            },
-            {
-              "path": "/images/272758/621929/17.webp",
-              "alt": "上池袋202 - 圖片 35",
-              "isPrimary": false,
-              "order": 35
-            },
-            {
-              "path": "/images/272758/621929/18.jpg",
-              "alt": "上池袋202 - 圖片 36",
-              "isPrimary": false,
-              "order": 36
-            },
-            {
-              "path": "/images/272758/621929/18.webp",
-              "alt": "上池袋202 - 圖片 37",
-              "isPrimary": false,
-              "order": 37
-            },
-            {
-              "path": "/images/272758/621929/19.jpg",
-              "alt": "上池袋202 - 圖片 38",
-              "isPrimary": false,
-              "order": 38
-            },
-            {
-              "path": "/images/272758/621929/19.webp",
-              "alt": "上池袋202 - 圖片 39",
-              "isPrimary": false,
-              "order": 39
-            },
-            {
-              "path": "/images/272758/621929/20.jpg",
-              "alt": "上池袋202 - 圖片 40",
-              "isPrimary": false,
-              "order": 40
-            },
-            {
-              "path": "/images/272758/621929/20.webp",
-              "alt": "上池袋202 - 圖片 41",
-              "isPrimary": false,
-              "order": 41
-            },
-            {
-              "path": "/images/272758/621929/21.jpg",
-              "alt": "上池袋202 - 圖片 42",
-              "isPrimary": false,
-              "order": 42
-            },
-            {
-              "path": "/images/272758/621929/21.webp",
-              "alt": "上池袋202 - 圖片 43",
-              "isPrimary": false,
-              "order": 43
-            },
-            {
-              "path": "/images/272758/621929/22.jpg",
-              "alt": "上池袋202 - 圖片 44",
-              "isPrimary": false,
-              "order": 44
-            },
-            {
-              "path": "/images/272758/621929/22.webp",
-              "alt": "上池袋202 - 圖片 45",
-              "isPrimary": false,
-              "order": 45
-            },
-            {
-              "path": "/images/272758/621929/23.jpg",
-              "alt": "上池袋202 - 圖片 46",
-              "isPrimary": false,
-              "order": 46
-            },
-            {
-              "path": "/images/272758/621929/23.webp",
-              "alt": "上池袋202 - 圖片 47",
-              "isPrimary": false,
-              "order": 47
-            },
-            {
-              "path": "/images/272758/621929/24.jpg",
-              "alt": "上池袋202 - 圖片 48",
-              "isPrimary": false,
-              "order": 48
-            },
-            {
-              "path": "/images/272758/621929/24.webp",
-              "alt": "上池袋202 - 圖片 49",
-              "isPrimary": false,
-              "order": 49
-            },
-            {
-              "path": "/images/272758/621929/25.jpg",
-              "alt": "上池袋202 - 圖片 50",
-              "isPrimary": false,
-              "order": 50
-            },
-            {
-              "path": "/images/272758/621929/25.webp",
-              "alt": "上池袋202 - 圖片 51",
-              "isPrimary": false,
-              "order": 51
-            },
-            {
-              "path": "/images/272758/621929/26.jpg",
-              "alt": "上池袋202 - 圖片 52",
-              "isPrimary": false,
-              "order": 52
-            },
-            {
-              "path": "/images/272758/621929/26.webp",
-              "alt": "上池袋202 - 圖片 53",
-              "isPrimary": false,
-              "order": 53
             }
           ]
         },
@@ -2545,184 +1345,94 @@
           "name": "上池袋201",
           "images": [
             {
-              "path": "/images/272758/629760/0.jpg",
+              "path": "/images/272758/629760/0.webp",
               "alt": "上池袋201 - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/272758/629760/0.webp",
+              "path": "/images/272758/629760/1.webp",
               "alt": "上池袋201 - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/272758/629760/1.jpg",
+              "path": "/images/272758/629760/2.webp",
               "alt": "上池袋201 - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/272758/629760/1.webp",
+              "path": "/images/272758/629760/3.webp",
               "alt": "上池袋201 - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/272758/629760/2.jpg",
+              "path": "/images/272758/629760/4.webp",
               "alt": "上池袋201 - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/272758/629760/2.webp",
+              "path": "/images/272758/629760/5.webp",
               "alt": "上池袋201 - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/272758/629760/3.jpg",
+              "path": "/images/272758/629760/6.webp",
               "alt": "上池袋201 - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/272758/629760/3.webp",
+              "path": "/images/272758/629760/7.webp",
               "alt": "上池袋201 - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/272758/629760/4.jpg",
+              "path": "/images/272758/629760/8.webp",
               "alt": "上池袋201 - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/272758/629760/4.webp",
+              "path": "/images/272758/629760/9.webp",
               "alt": "上池袋201 - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/272758/629760/5.jpg",
+              "path": "/images/272758/629760/10.webp",
               "alt": "上池袋201 - 圖片 10",
               "isPrimary": false,
               "order": 10
             },
             {
-              "path": "/images/272758/629760/5.webp",
+              "path": "/images/272758/629760/11.webp",
               "alt": "上池袋201 - 圖片 11",
               "isPrimary": false,
               "order": 11
             },
             {
-              "path": "/images/272758/629760/6.jpg",
+              "path": "/images/272758/629760/12.webp",
               "alt": "上池袋201 - 圖片 12",
               "isPrimary": false,
               "order": 12
             },
             {
-              "path": "/images/272758/629760/6.webp",
+              "path": "/images/272758/629760/13.webp",
               "alt": "上池袋201 - 圖片 13",
               "isPrimary": false,
               "order": 13
             },
             {
-              "path": "/images/272758/629760/7.jpg",
+              "path": "/images/272758/629760/14.webp",
               "alt": "上池袋201 - 圖片 14",
               "isPrimary": false,
               "order": 14
-            },
-            {
-              "path": "/images/272758/629760/7.webp",
-              "alt": "上池袋201 - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/272758/629760/8.jpg",
-              "alt": "上池袋201 - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/272758/629760/8.webp",
-              "alt": "上池袋201 - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/272758/629760/9.jpg",
-              "alt": "上池袋201 - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/272758/629760/9.webp",
-              "alt": "上池袋201 - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/272758/629760/10.jpg",
-              "alt": "上池袋201 - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/272758/629760/10.webp",
-              "alt": "上池袋201 - 圖片 21",
-              "isPrimary": false,
-              "order": 21
-            },
-            {
-              "path": "/images/272758/629760/11.jpg",
-              "alt": "上池袋201 - 圖片 22",
-              "isPrimary": false,
-              "order": 22
-            },
-            {
-              "path": "/images/272758/629760/11.webp",
-              "alt": "上池袋201 - 圖片 23",
-              "isPrimary": false,
-              "order": 23
-            },
-            {
-              "path": "/images/272758/629760/12.jpg",
-              "alt": "上池袋201 - 圖片 24",
-              "isPrimary": false,
-              "order": 24
-            },
-            {
-              "path": "/images/272758/629760/12.webp",
-              "alt": "上池袋201 - 圖片 25",
-              "isPrimary": false,
-              "order": 25
-            },
-            {
-              "path": "/images/272758/629760/13.jpg",
-              "alt": "上池袋201 - 圖片 26",
-              "isPrimary": false,
-              "order": 26
-            },
-            {
-              "path": "/images/272758/629760/13.webp",
-              "alt": "上池袋201 - 圖片 27",
-              "isPrimary": false,
-              "order": 27
-            },
-            {
-              "path": "/images/272758/629760/14.jpg",
-              "alt": "上池袋201 - 圖片 28",
-              "isPrimary": false,
-              "order": 28
-            },
-            {
-              "path": "/images/272758/629760/14.webp",
-              "alt": "上池袋201 - 圖片 29",
-              "isPrimary": false,
-              "order": 29
             }
           ]
         },
@@ -2731,136 +1441,70 @@
           "name": "上池袋402",
           "images": [
             {
-              "path": "/images/272758/632393/0.jpg",
+              "path": "/images/272758/632393/0.webp",
               "alt": "上池袋402 - 主圖",
               "isPrimary": true,
               "order": 0
             },
             {
-              "path": "/images/272758/632393/0.webp",
+              "path": "/images/272758/632393/1.webp",
               "alt": "上池袋402 - 圖片 1",
               "isPrimary": false,
               "order": 1
             },
             {
-              "path": "/images/272758/632393/1.jpg",
+              "path": "/images/272758/632393/2.webp",
               "alt": "上池袋402 - 圖片 2",
               "isPrimary": false,
               "order": 2
             },
             {
-              "path": "/images/272758/632393/1.webp",
+              "path": "/images/272758/632393/3.webp",
               "alt": "上池袋402 - 圖片 3",
               "isPrimary": false,
               "order": 3
             },
             {
-              "path": "/images/272758/632393/2.jpg",
+              "path": "/images/272758/632393/4.webp",
               "alt": "上池袋402 - 圖片 4",
               "isPrimary": false,
               "order": 4
             },
             {
-              "path": "/images/272758/632393/2.webp",
+              "path": "/images/272758/632393/5.webp",
               "alt": "上池袋402 - 圖片 5",
               "isPrimary": false,
               "order": 5
             },
             {
-              "path": "/images/272758/632393/3.jpg",
+              "path": "/images/272758/632393/6.webp",
               "alt": "上池袋402 - 圖片 6",
               "isPrimary": false,
               "order": 6
             },
             {
-              "path": "/images/272758/632393/3.webp",
+              "path": "/images/272758/632393/7.webp",
               "alt": "上池袋402 - 圖片 7",
               "isPrimary": false,
               "order": 7
             },
             {
-              "path": "/images/272758/632393/4.jpg",
+              "path": "/images/272758/632393/8.webp",
               "alt": "上池袋402 - 圖片 8",
               "isPrimary": false,
               "order": 8
             },
             {
-              "path": "/images/272758/632393/4.webp",
+              "path": "/images/272758/632393/9.webp",
               "alt": "上池袋402 - 圖片 9",
               "isPrimary": false,
               "order": 9
             },
             {
-              "path": "/images/272758/632393/5.jpg",
+              "path": "/images/272758/632393/10.webp",
               "alt": "上池袋402 - 圖片 10",
               "isPrimary": false,
               "order": 10
-            },
-            {
-              "path": "/images/272758/632393/5.webp",
-              "alt": "上池袋402 - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/272758/632393/6.jpg",
-              "alt": "上池袋402 - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/272758/632393/6.webp",
-              "alt": "上池袋402 - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/272758/632393/7.jpg",
-              "alt": "上池袋402 - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/272758/632393/7.webp",
-              "alt": "上池袋402 - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            },
-            {
-              "path": "/images/272758/632393/8.jpg",
-              "alt": "上池袋402 - 圖片 16",
-              "isPrimary": false,
-              "order": 16
-            },
-            {
-              "path": "/images/272758/632393/8.webp",
-              "alt": "上池袋402 - 圖片 17",
-              "isPrimary": false,
-              "order": 17
-            },
-            {
-              "path": "/images/272758/632393/9.jpg",
-              "alt": "上池袋402 - 圖片 18",
-              "isPrimary": false,
-              "order": 18
-            },
-            {
-              "path": "/images/272758/632393/9.webp",
-              "alt": "上池袋402 - 圖片 19",
-              "isPrimary": false,
-              "order": 19
-            },
-            {
-              "path": "/images/272758/632393/10.jpg",
-              "alt": "上池袋402 - 圖片 20",
-              "isPrimary": false,
-              "order": 20
-            },
-            {
-              "path": "/images/272758/632393/10.webp",
-              "alt": "上池袋402 - 圖片 21",
-              "isPrimary": false,
-              "order": 21
             }
           ]
         }
