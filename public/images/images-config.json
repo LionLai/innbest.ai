@@ -852,108 +852,6 @@
             }
           ]
         },
-        "337011": {
-          "roomId": 337011,
-          "name": "Room 337011",
-          "images": [
-            {
-              "path": "/images/97259/337011/1.webp",
-              "alt": "Room 337011 - 主圖",
-              "isPrimary": true,
-              "order": 0
-            },
-            {
-              "path": "/images/97259/337011/2.webp",
-              "alt": "Room 337011 - 圖片 1",
-              "isPrimary": false,
-              "order": 1
-            },
-            {
-              "path": "/images/97259/337011/3.webp",
-              "alt": "Room 337011 - 圖片 2",
-              "isPrimary": false,
-              "order": 2
-            },
-            {
-              "path": "/images/97259/337011/4.webp",
-              "alt": "Room 337011 - 圖片 3",
-              "isPrimary": false,
-              "order": 3
-            },
-            {
-              "path": "/images/97259/337011/5.webp",
-              "alt": "Room 337011 - 圖片 4",
-              "isPrimary": false,
-              "order": 4
-            },
-            {
-              "path": "/images/97259/337011/6.webp",
-              "alt": "Room 337011 - 圖片 5",
-              "isPrimary": false,
-              "order": 5
-            },
-            {
-              "path": "/images/97259/337011/7.webp",
-              "alt": "Room 337011 - 圖片 6",
-              "isPrimary": false,
-              "order": 6
-            },
-            {
-              "path": "/images/97259/337011/8.webp",
-              "alt": "Room 337011 - 圖片 7",
-              "isPrimary": false,
-              "order": 7
-            },
-            {
-              "path": "/images/97259/337011/9.webp",
-              "alt": "Room 337011 - 圖片 8",
-              "isPrimary": false,
-              "order": 8
-            },
-            {
-              "path": "/images/97259/337011/10.webp",
-              "alt": "Room 337011 - 圖片 9",
-              "isPrimary": false,
-              "order": 9
-            },
-            {
-              "path": "/images/97259/337011/11.webp",
-              "alt": "Room 337011 - 圖片 10",
-              "isPrimary": false,
-              "order": 10
-            },
-            {
-              "path": "/images/97259/337011/12.webp",
-              "alt": "Room 337011 - 圖片 11",
-              "isPrimary": false,
-              "order": 11
-            },
-            {
-              "path": "/images/97259/337011/13.webp",
-              "alt": "Room 337011 - 圖片 12",
-              "isPrimary": false,
-              "order": 12
-            },
-            {
-              "path": "/images/97259/337011/14.webp",
-              "alt": "Room 337011 - 圖片 13",
-              "isPrimary": false,
-              "order": 13
-            },
-            {
-              "path": "/images/97259/337011/15.webp",
-              "alt": "Room 337011 - 圖片 14",
-              "isPrimary": false,
-              "order": 14
-            },
-            {
-              "path": "/images/97259/337011/16.webp",
-              "alt": "Room 337011 - 圖片 15",
-              "isPrimary": false,
-              "order": 15
-            }
-          ]
-        },
         "337012": {
           "roomId": 337012,
           "name": "307(エコノミー)",
@@ -1051,6 +949,108 @@
             {
               "path": "/images/97259/337012/16.webp",
               "alt": "307(エコノミー) - 圖片 15",
+              "isPrimary": false,
+              "order": 15
+            }
+          ]
+        },
+        "337013": {
+          "roomId": 337013,
+          "name": "エコノミー",
+          "images": [
+            {
+              "path": "/images/97259/337013/1.webp",
+              "alt": "エコノミー - 主圖",
+              "isPrimary": true,
+              "order": 0
+            },
+            {
+              "path": "/images/97259/337013/2.webp",
+              "alt": "エコノミー - 圖片 1",
+              "isPrimary": false,
+              "order": 1
+            },
+            {
+              "path": "/images/97259/337013/3.webp",
+              "alt": "エコノミー - 圖片 2",
+              "isPrimary": false,
+              "order": 2
+            },
+            {
+              "path": "/images/97259/337013/4.webp",
+              "alt": "エコノミー - 圖片 3",
+              "isPrimary": false,
+              "order": 3
+            },
+            {
+              "path": "/images/97259/337013/5.webp",
+              "alt": "エコノミー - 圖片 4",
+              "isPrimary": false,
+              "order": 4
+            },
+            {
+              "path": "/images/97259/337013/6.webp",
+              "alt": "エコノミー - 圖片 5",
+              "isPrimary": false,
+              "order": 5
+            },
+            {
+              "path": "/images/97259/337013/7.webp",
+              "alt": "エコノミー - 圖片 6",
+              "isPrimary": false,
+              "order": 6
+            },
+            {
+              "path": "/images/97259/337013/8.webp",
+              "alt": "エコノミー - 圖片 7",
+              "isPrimary": false,
+              "order": 7
+            },
+            {
+              "path": "/images/97259/337013/9.webp",
+              "alt": "エコノミー - 圖片 8",
+              "isPrimary": false,
+              "order": 8
+            },
+            {
+              "path": "/images/97259/337013/10.webp",
+              "alt": "エコノミー - 圖片 9",
+              "isPrimary": false,
+              "order": 9
+            },
+            {
+              "path": "/images/97259/337013/11.webp",
+              "alt": "エコノミー - 圖片 10",
+              "isPrimary": false,
+              "order": 10
+            },
+            {
+              "path": "/images/97259/337013/12.webp",
+              "alt": "エコノミー - 圖片 11",
+              "isPrimary": false,
+              "order": 11
+            },
+            {
+              "path": "/images/97259/337013/13.webp",
+              "alt": "エコノミー - 圖片 12",
+              "isPrimary": false,
+              "order": 12
+            },
+            {
+              "path": "/images/97259/337013/14.webp",
+              "alt": "エコノミー - 圖片 13",
+              "isPrimary": false,
+              "order": 13
+            },
+            {
+              "path": "/images/97259/337013/15.webp",
+              "alt": "エコノミー - 圖片 14",
+              "isPrimary": false,
+              "order": 14
+            },
+            {
+              "path": "/images/97259/337013/16.webp",
+              "alt": "エコノミー - 圖片 15",
               "isPrimary": false,
               "order": 15
             }

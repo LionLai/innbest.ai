@@ -45,49 +45,32 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
 
   return (
     <Card className="hover:shadow-lg transition-shadow overflow-hidden">
-      {/* 房產主圖 */}
-      {propertyImage && (
-        <div className="relative h-64 w-full bg-muted">
-          <Image
-            src={propertyImage.path}
-            alt={propertyImage.alt}
-            fill
-            className="object-cover"
-            priority
-          />
-          {/* 疊加漸層效果 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          
-          {/* 房產名稱疊加在圖片上 */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <h2 className="text-3xl font-bold mb-2">{property.name}</h2>
-            <div className="flex flex-wrap items-center gap-2">
-              {fullAddress && googleMapsUrl && (
-                <button
-                  onClick={() => setIsMapOpen(true)}
-                  className="flex items-center gap-1 text-white/90 hover:text-white hover:underline transition-all cursor-pointer group"
-                >
-                  <MapPin className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                  {fullAddress}
-                </button>
-              )}
-              {property.propertyType && (
-                <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                  {property.propertyType}
-                </Badge>
-              )}
-            </div>
+      {/* 橫向布局：左側圖片 + 右側內容 */}
+      <div className="flex flex-col md:flex-row">
+        {/* 左側：房產主圖 */}
+        {propertyImage ? (
+          <div className="relative w-full md:w-80 lg:w-96 aspect-square md:h-80 lg:h-96 bg-muted shrink-0 md:self-start">
+            <Image
+              src={propertyImage.path}
+              alt={propertyImage.alt}
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="w-full md:w-80 lg:w-96 aspect-square md:h-80 lg:h-96 bg-muted flex items-center justify-center shrink-0 md:self-start">
+            <p className="text-muted-foreground text-lg">暫無圖片</p>
+          </div>
+        )}
 
-      {/* 沒有圖片時的 Header */}
-      {!propertyImage && (
-        <CardHeader>
-          <div className="flex items-start justify-between">
+        {/* 右側：飯店資訊 */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Header 區域 */}
+          <CardHeader className="pb-4">
             <div>
-              <CardTitle className="text-2xl">{property.name}</CardTitle>
-              <CardDescription className="mt-2">
+              <CardTitle className="text-2xl md:text-3xl mb-2">{property.name}</CardTitle>
+              <CardDescription>
                 <div className="flex flex-wrap items-center gap-2">
                   {fullAddress && googleMapsUrl && (
                     <button
@@ -95,57 +78,56 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
                       className="flex items-center gap-1 text-foreground/70 hover:text-foreground hover:underline transition-all cursor-pointer group"
                     >
                       <MapPin className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                      {fullAddress}
+                      <span className="line-clamp-1">{fullAddress}</span>
                     </button>
                   )}
                   {property.propertyType && (
-                    <Badge variant="outline">
+                    <Badge variant="secondary">
                       {property.propertyType}
                     </Badge>
                   )}
                 </div>
               </CardDescription>
             </div>
-          </div>
-        </CardHeader>
-      )}
-      <CardContent className="p-6">
-        <div className="space-y-4">
-          {/* 摺疊/展開控制區域 */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h4 className="font-semibold text-base">
-                房型選擇
-              </h4>
-              <Badge variant="secondary" className="font-normal">
-                {property.roomTypes.length} 種房型
-              </Badge>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="gap-2"
-            >
-              {isExpanded ? (
-                <>
-                  收起房型
-                  <ChevronUp className="h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  展開查看房型
-                  <ChevronDown className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </div>
+          </CardHeader>
+          {/* Content 區域 */}
+          <CardContent className="pt-0 pb-6 px-6 flex-1">
+            <div className="space-y-4">
+              {/* 摺疊/展開控制區域 */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <h4 className="font-semibold text-base">
+                    房型選擇
+                  </h4>
+                  <Badge variant="secondary" className="font-normal">
+                    {property.roomTypes.length} 種房型
+                  </Badge>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="gap-2"
+                >
+                  {isExpanded ? (
+                    <>
+                      收起房型
+                      <ChevronUp className="h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      展開查看房型
+                      <ChevronDown className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
 
-          {/* 房型列表 - 條件渲染 */}
-          {isExpanded && (
-            <div>
-              {/* Grid 布局 - 塊狀卡片 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* 房型列表 - 條件渲染 */}
+              {isExpanded && (
+                <div>
+                  {/* Grid 布局 - 塊狀卡片 */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {property.roomTypes.length > 0 ? (
                 property.roomTypes.map((room) => {
                   const roomImage = getRoomPrimaryImage(property.id, room.id);
@@ -243,12 +225,14 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
                 <div className="col-span-full text-sm text-muted-foreground text-center py-8">
                   此飯店目前沒有可預訂的房型
                 </div>
+                  )}
+                  </div>
+                </div>
               )}
-              </div>
             </div>
-          )}
+          </CardContent>
         </div>
-      </CardContent>
+      </div>
 
       {/* 地圖 Modal */}
       <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
