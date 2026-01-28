@@ -49,15 +49,20 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
       <div className="flex flex-col md:flex-row">
         {/* 左側：房產主圖 */}
         {propertyImage ? (
-          <div className="relative w-full md:w-80 lg:w-96 aspect-square md:h-80 lg:h-96 bg-muted shrink-0 md:self-start">
+          <Link 
+            href={`/hotels/${property.id}`}
+            className="relative w-full md:w-80 lg:w-96 aspect-square md:h-80 lg:h-96 bg-muted shrink-0 md:self-start group cursor-pointer block"
+          >
             <Image
               src={propertyImage.path}
               alt={propertyImage.alt}
               fill
-              className="object-cover"
+              className="object-cover transition-transform group-hover:scale-105"
               priority
             />
-          </div>
+            {/* 懸浮提示 */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+          </Link>
         ) : (
           <div className="w-full md:w-80 lg:w-96 aspect-square md:h-80 lg:h-96 bg-muted flex items-center justify-center shrink-0 md:self-start">
             <p className="text-muted-foreground text-lg">暫無圖片</p>
@@ -69,7 +74,11 @@ export function HotelPropertyCard({ property }: HotelPropertyCardProps) {
           {/* Header 區域 */}
           <CardHeader className="pb-4">
             <div>
-              <CardTitle className="text-2xl md:text-3xl mb-2">{property.name}</CardTitle>
+              <Link href={`/hotels/${property.id}`}>
+                <CardTitle className="text-2xl md:text-3xl mb-2 hover:text-primary transition-colors cursor-pointer">
+                  {property.name}
+                </CardTitle>
+              </Link>
               <CardDescription>
                 <div className="flex flex-wrap items-center gap-2">
                   {fullAddress && googleMapsUrl && (
