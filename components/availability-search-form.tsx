@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useMemo } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { BookingDialog } from "@/components/booking-dialog";
+import { getPropertyPrimaryImage } from "@/lib/images-config";
 import type { RoomAvailability, HotelProperty } from "@/lib/types/hotel";
 
 interface AvailabilitySearchFormProps {
@@ -18,14 +18,48 @@ interface AvailabilitySearchFormProps {
   defaultCheckOut?: string;
 }
 
-export function AvailabilitySearchForm({ 
-  properties, 
+interface BestRoomResult {
+  property: HotelProperty;
+  room: RoomAvailability;
+  totalPrice: number;
+  nights: number;
+  currency: string;
+}
+
+// 枚舉 checkIn 到 checkOut 之間的每一晚（不含 checkOut 當天）
+function getNightDates(checkIn: string, checkOut: string): string[] {
+  const dates: string[] = [];
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return dates;
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+    dates.push(d.toISOString().split("T")[0]);
+  }
+  return dates;
+}
+
+// 若房間整段都可訂且每晚都有價格，回傳總價；否則回傳 null
+function calcTotalPriceIfAvailable(
+  room: RoomAvailability,
+  nightDates: string[],
+): number | null {
+  let total = 0;
+  for (const date of nightDates) {
+    if (!room.availability[date]) return null;
+    const price = room.prices?.[date];
+    if (price == null) return null;
+    total += price;
+  }
+  return total;
+}
+
+export function AvailabilitySearchForm({
+  properties,
   defaultPropertyId,
   defaultRoomId,
   defaultCheckIn = "",
-  defaultCheckOut = ""
+  defaultCheckOut = "",
 }: AvailabilitySearchFormProps) {
-  const router = useRouter();
   const [startDate, setStartDate] = useState(defaultCheckIn);
   const [endDate, setEndDate] = useState(defaultCheckOut);
   const [selectedPropertyId, setSelectedPropertyId] = useState<number | "">(defaultPropertyId || "");
@@ -33,7 +67,11 @@ export function AvailabilitySearchForm({
   const [isLoading, setIsLoading] = useState(false);
   const [availability, setAvailability] = useState<RoomAvailability[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+  const [hasSearched, setHasSearched] = useState(false);
+  // 記住查詢當下的日期，避免使用者查完後又改日期造成顯示與結果不一致
+  const [searchedCheckIn, setSearchedCheckIn] = useState("");
+  const [searchedCheckOut, setSearchedCheckOut] = useState("");
+
   // 訂房彈窗狀態
   const [bookingDialog, setBookingDialog] = useState<{
     open: boolean;
@@ -54,15 +92,49 @@ export function AvailabilitySearchForm({
     ? properties.find((p) => p.id === selectedPropertyId)?.roomTypes || []
     : [];
 
+  // 篩選：每間飯店最便宜、且整段日期都可訂的房間
+  const bestRoomPerProperty = useMemo<BestRoomResult[]>(() => {
+    if (availability.length === 0 || !searchedCheckIn || !searchedCheckOut) return [];
+    const nightDates = getNightDates(searchedCheckIn, searchedCheckOut);
+    if (nightDates.length === 0) return [];
+
+    const propertyMap = new Map<number, HotelProperty>();
+    for (const p of properties) propertyMap.set(p.id, p);
+
+    const byProperty = new Map<number, BestRoomResult>();
+    for (const room of availability) {
+      const total = calcTotalPriceIfAvailable(room, nightDates);
+      if (total == null) continue;
+      const property = propertyMap.get(room.propertyId);
+      if (!property) continue;
+      const existing = byProperty.get(room.propertyId);
+      if (!existing || total < existing.totalPrice) {
+        byProperty.set(room.propertyId, {
+          property,
+          room,
+          totalPrice: total,
+          nights: nightDates.length,
+          currency: property.currency || "JPY",
+        });
+      }
+    }
+    return Array.from(byProperty.values()).sort((a, b) => a.totalPrice - b.totalPrice);
+  }, [availability, searchedCheckIn, searchedCheckOut, properties]);
+
   const handleSearch = async () => {
     if (!startDate || !endDate) {
-      setError("請選擇開始日期和結束日期");
+      setError("請選擇入住日期和退房日期");
+      return;
+    }
+    if (new Date(endDate) <= new Date(startDate)) {
+      setError("退房日期必須晚於入住日期");
       return;
     }
 
     setIsLoading(true);
     setError(null);
     setAvailability([]);
+    setHasSearched(true);
 
     try {
       const params = new URLSearchParams({
@@ -83,6 +155,8 @@ export function AvailabilitySearchForm({
 
       if (result.success) {
         setAvailability(result.data || []);
+        setSearchedCheckIn(startDate);
+        setSearchedCheckOut(endDate);
       } else {
         setError(result.error || "查詢失敗");
       }
@@ -101,6 +175,9 @@ export function AvailabilitySearchForm({
     setSelectedRoomId("");
     setAvailability([]);
     setError(null);
+    setHasSearched(false);
+    setSearchedCheckIn("");
+    setSearchedCheckOut("");
   };
 
   return (
@@ -108,7 +185,7 @@ export function AvailabilitySearchForm({
       <Card>
         <CardHeader>
           <CardTitle>查詢空房狀態</CardTitle>
-          <CardDescription>選擇入住日期與飯店，即時查詢空房狀況</CardDescription>
+          <CardDescription>選擇入住與退房日期，系統將列出每間飯店符合日期的最低價房型</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
@@ -196,43 +273,107 @@ export function AvailabilitySearchForm({
         </CardContent>
       </Card>
 
-      {/* 查詢結果 - 月曆視圖 */}
-      {availability.length > 0 && (
-        <>
-          <AvailabilityCalendar
-            availability={availability}
-            startDate={startDate}
-            endDate={endDate}
-            selectable={true}
-            onBook={(room, checkIn, checkOut) => {
-              // 打開訂房彈窗
-              setBookingDialog({
-                open: true,
-                room,
-                checkIn,
-                checkOut,
-                propertyId: room.propertyId,
-              });
-            }}
-          />
-          
+      {/* 查詢結果 - 飯店卡片列表 */}
+      {hasSearched && !isLoading && !error && (
+        <div className="space-y-4">
+          {bestRoomPerProperty.length > 0 ? (
+            <>
+              <div className="text-sm text-muted-foreground">
+                找到 {bestRoomPerProperty.length} 間符合日期的飯店（依總價由低至高）
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {bestRoomPerProperty.map((item) => {
+                  const img = getPropertyPrimaryImage(item.property.id);
+                  const avgPerNight = Math.round(item.totalPrice / item.nights);
+                  const location = [item.property.city, item.property.country]
+                    .filter(Boolean)
+                    .join(", ");
+                  return (
+                    <Card
+                      key={item.property.id}
+                      className="overflow-hidden hover:shadow-lg transition-shadow"
+                    >
+                      <div className="flex flex-col sm:flex-row">
+                        {img ? (
+                          <div className="relative w-full sm:w-48 h-48 sm:h-auto bg-muted shrink-0">
+                            <Image
+                              src={img.path}
+                              alt={img.alt}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 100vw, 192px"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full sm:w-48 h-48 bg-muted shrink-0 flex items-center justify-center">
+                            <span className="text-muted-foreground text-sm">暫無圖片</span>
+                          </div>
+                        )}
+                        <div className="flex-1 p-4 flex flex-col min-w-0">
+                          <h3 className="text-lg font-bold mb-1 line-clamp-1">
+                            {item.property.name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-1 line-clamp-1">
+                            {item.room.name}
+                          </p>
+                          {location && (
+                            <p className="text-xs text-muted-foreground mb-3 line-clamp-1">
+                              {location}
+                            </p>
+                          )}
+                          <div className="mt-auto space-y-2">
+                            <div className="text-xs text-muted-foreground">
+                              {item.nights} 晚 · 每晚約 ¥{avgPerNight.toLocaleString()}
+                            </div>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="text-xl font-bold text-primary">
+                                ¥{item.totalPrice.toLocaleString()}
+                              </div>
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  setBookingDialog({
+                                    open: true,
+                                    room: item.room,
+                                    checkIn: searchedCheckIn,
+                                    checkOut: searchedCheckOut,
+                                    propertyId: item.property.id,
+                                  })
+                                }
+                              >
+                                立即預訂
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <p className="text-muted-foreground mb-2">沒有符合您日期的飯店</p>
+                <p className="text-sm text-muted-foreground">請嘗試調整日期區間或篩選條件</p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* 訂房彈窗 */}
           {bookingDialog.room && (
             <BookingDialog
               open={bookingDialog.open}
-              onClose={() => setBookingDialog({ 
-                ...bookingDialog, 
-                open: false 
-              })}
+              onClose={() => setBookingDialog({ ...bookingDialog, open: false })}
               room={bookingDialog.room}
               checkIn={bookingDialog.checkIn}
               checkOut={bookingDialog.checkOut}
               propertyId={bookingDialog.propertyId}
             />
           )}
-        </>
+        </div>
       )}
     </div>
   );
 }
-

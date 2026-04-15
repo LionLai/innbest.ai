@@ -4,15 +4,15 @@ import { useSearchParams } from "next/navigation";
 import { AvailabilitySearchForm } from "@/components/availability-search-form";
 import { useProperties } from "@/contexts/properties-context";
 
-// 計算預設日期的輔助函數
+// 計算預設日期的輔助函數：今天入住、明天退房（一晚）
 function getDefaultDates() {
   const today = new Date();
-  const checkIn = today.toISOString().split('T')[0]; // 今天
-  
+  const checkIn = today.toISOString().split('T')[0];
+
   const checkOutDate = new Date(today);
-  checkOutDate.setDate(checkOutDate.getDate() + 30); // 30天後
+  checkOutDate.setDate(checkOutDate.getDate() + 1);
   const checkOut = checkOutDate.toISOString().split('T')[0];
-  
+
   return { checkIn, checkOut };
 }
 
